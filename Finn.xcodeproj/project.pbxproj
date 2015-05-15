@@ -19,6 +19,11 @@
 		FD0F40941B06542F00B6C423 /* Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40931B06542F00B6C423 /* Hex.swift */; };
 		FD0F40961B06544200B6C423 /* Picture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40951B06544100B6C423 /* Picture.swift */; };
 		FD0F40981B06555700B6C423 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40971B06555700B6C423 /* Restaurant.swift */; };
+		FD0F409B1B066AEB00B6C423 /* Resizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F409A1B066AEB00B6C423 /* Resizer.swift */; };
+		FD0F409E1B066B5400B6C423 /* FinnCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F409D1B066B5400B6C423 /* FinnCell.swift */; };
+		FD0F40A21B066BFF00B6C423 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A11B066BFF00B6C423 /* AppInfo.swift */; };
+		FD0F40A41B066C1E00B6C423 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A31B066C1E00B6C423 /* API.swift */; };
+		FD0F40A71B066E4400B6C423 /* Store.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A51B066E4400B6C423 /* Store.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +58,11 @@
 		FD0F40931B06542F00B6C423 /* Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hex.swift; sourceTree = "<group>"; };
 		FD0F40951B06544100B6C423 /* Picture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Picture.swift; sourceTree = "<group>"; };
 		FD0F40971B06555700B6C423 /* Restaurant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+		FD0F409A1B066AEB00B6C423 /* Resizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resizer.swift; sourceTree = "<group>"; };
+		FD0F409D1B066B5400B6C423 /* FinnCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinnCell.swift; sourceTree = "<group>"; };
+		FD0F40A11B066BFF00B6C423 /* AppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		FD0F40A31B066C1E00B6C423 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		FD0F40A61B066E4400B6C423 /* Store.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Store.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,14 +129,14 @@
 			isa = PBXGroup;
 			children = (
 				FD0F406F1B064FD000B6C423 /* AppDelegate.swift */,
-				FD0F40711B064FD000B6C423 /* ViewController.swift */,
-				FD0F40911B0653A700B6C423 /* FinnPickerView.swift */,
-				FD0F40971B06555700B6C423 /* Restaurant.swift */,
-				FD0F40931B06542F00B6C423 /* Hex.swift */,
-				FD0F40951B06544100B6C423 /* Picture.swift */,
+				FD0F409F1B066BB000B6C423 /* Controllers */,
+				FD0F409C1B066B3400B6C423 /* Views */,
+				FD0F40A01B066BDD00B6C423 /* Models */,
+				FD0F40991B066AD400B6C423 /* Functions */,
 				FD0F40901B06509000B6C423 /* BridgeHeader.h */,
 				FD0F40731B064FD000B6C423 /* Main.storyboard */,
 				FD0F40761B064FD000B6C423 /* Images.xcassets */,
+				FD0F40A51B066E4400B6C423 /* Store.xcdatamodeld */,
 				FD0F40781B064FD000B6C423 /* LaunchScreen.xib */,
 				FD0F406D1B064FD000B6C423 /* Supporting Files */,
 			);
@@ -156,6 +166,43 @@
 				FD0F40841B064FD000B6C423 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FD0F40991B066AD400B6C423 /* Functions */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40931B06542F00B6C423 /* Hex.swift */,
+				FD0F409A1B066AEB00B6C423 /* Resizer.swift */,
+				FD0F40951B06544100B6C423 /* Picture.swift */,
+			);
+			name = Functions;
+			sourceTree = "<group>";
+		};
+		FD0F409C1B066B3400B6C423 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40911B0653A700B6C423 /* FinnPickerView.swift */,
+				FD0F409D1B066B5400B6C423 /* FinnCell.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		FD0F409F1B066BB000B6C423 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40711B064FD000B6C423 /* ViewController.swift */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		FD0F40A01B066BDD00B6C423 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40971B06555700B6C423 /* Restaurant.swift */,
+				FD0F40A11B066BFF00B6C423 /* AppInfo.swift */,
+				FD0F40A31B066C1E00B6C423 /* API.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,9 +375,14 @@
 				FD0F40921B0653A700B6C423 /* FinnPickerView.swift in Sources */,
 				FD0F40961B06544200B6C423 /* Picture.swift in Sources */,
 				FD0F40981B06555700B6C423 /* Restaurant.swift in Sources */,
+				FD0F409B1B066AEB00B6C423 /* Resizer.swift in Sources */,
+				FD0F40A41B066C1E00B6C423 /* API.swift in Sources */,
+				FD0F40A71B066E4400B6C423 /* Store.xcdatamodeld in Sources */,
+				FD0F409E1B066B5400B6C423 /* FinnCell.swift in Sources */,
 				FD0F40941B06542F00B6C423 /* Hex.swift in Sources */,
 				FD0F40721B064FD000B6C423 /* ViewController.swift in Sources */,
 				FD0F40701B064FD000B6C423 /* AppDelegate.swift in Sources */,
+				FD0F40A21B066BFF00B6C423 /* AppInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,6 +596,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FD0F40A51B066E4400B6C423 /* Store.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FD0F40A61B066E4400B6C423 /* Store.xcdatamodel */,
+			);
+			currentVersion = FD0F40A61B066E4400B6C423 /* Store.xcdatamodel */;
+			path = Store.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = FD0F40621B064FD000B6C423 /* Project object */;
 }

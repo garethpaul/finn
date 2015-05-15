@@ -8,11 +8,9 @@ import Foundation
 class Restaurant {
     var name: String
     var image: String
-    var screen_name: String
 
-    init(name: String, image: String, screen_name: String) {
+    init(name: String, image: String) {
         self.name = name
         self.image = image
-        self.screen_name = screen_name
     }
 }
