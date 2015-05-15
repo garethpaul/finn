@@ -1,0 +1,549 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		26A7AFDD5AD83F2ED045F7F1 /* libPods-Finn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D89C6C57A467507000F3F74 /* libPods-Finn.a */; };
+		91E9A4AD3A3D31318040AA31 /* libPods-FinnTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */; };
+		FD0F40701B064FD000B6C423 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F406F1B064FD000B6C423 /* AppDelegate.swift */; };
+		FD0F40721B064FD000B6C423 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40711B064FD000B6C423 /* ViewController.swift */; };
+		FD0F40751B064FD000B6C423 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FD0F40731B064FD000B6C423 /* Main.storyboard */; };
+		FD0F40771B064FD000B6C423 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD0F40761B064FD000B6C423 /* Images.xcassets */; };
+		FD0F407A1B064FD000B6C423 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = FD0F40781B064FD000B6C423 /* LaunchScreen.xib */; };
+		FD0F40861B064FD000B6C423 /* FinnTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40851B064FD000B6C423 /* FinnTests.swift */; };
+		FD0F40921B0653A700B6C423 /* FinnPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40911B0653A700B6C423 /* FinnPickerView.swift */; };
+		FD0F40941B06542F00B6C423 /* Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40931B06542F00B6C423 /* Hex.swift */; };
+		FD0F40961B06544200B6C423 /* Picture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40951B06544100B6C423 /* Picture.swift */; };
+		FD0F40981B06555700B6C423 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40971B06555700B6C423 /* Restaurant.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FD0F40801B064FD000B6C423 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FD0F40621B064FD000B6C423 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FD0F40691B064FD000B6C423;
+			remoteInfo = Finn;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1330092F4A2373F1232CF9DF /* Pods-FinnTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FinnTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests.release.xcconfig"; sourceTree = "<group>"; };
+		3B0670D3F8AFEB110418742F /* Pods-Finn.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Finn.release.xcconfig"; path = "Pods/Target Support Files/Pods-Finn/Pods-Finn.release.xcconfig"; sourceTree = "<group>"; };
+		3D89C6C57A467507000F3F74 /* libPods-Finn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Finn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F735077D7243DF9728F802D /* Pods-FinnTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FinnTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests.debug.xcconfig"; sourceTree = "<group>"; };
+		631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FinnTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E3C2EC4D6F1FE049FA5D47B /* Pods-Finn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Finn.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Finn/Pods-Finn.debug.xcconfig"; sourceTree = "<group>"; };
+		FD0F406A1B064FD000B6C423 /* Finn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finn.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD0F406E1B064FD000B6C423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FD0F406F1B064FD000B6C423 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FD0F40711B064FD000B6C423 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FD0F40741B064FD000B6C423 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FD0F40761B064FD000B6C423 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FD0F40791B064FD000B6C423 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		FD0F407F1B064FD000B6C423 /* FinnTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FinnTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD0F40841B064FD000B6C423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FD0F40851B064FD000B6C423 /* FinnTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinnTests.swift; sourceTree = "<group>"; };
+		FD0F40901B06509000B6C423 /* BridgeHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgeHeader.h; sourceTree = "<group>"; };
+		FD0F40911B0653A700B6C423 /* FinnPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FinnPickerView.swift; sourceTree = "<group>"; };
+		FD0F40931B06542F00B6C423 /* Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hex.swift; sourceTree = "<group>"; };
+		FD0F40951B06544100B6C423 /* Picture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Picture.swift; sourceTree = "<group>"; };
+		FD0F40971B06555700B6C423 /* Restaurant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FD0F40671B064FD000B6C423 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26A7AFDD5AD83F2ED045F7F1 /* libPods-Finn.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD0F407C1B064FD000B6C423 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91E9A4AD3A3D31318040AA31 /* libPods-FinnTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF4144B910BC59C4452B7AA3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3D89C6C57A467507000F3F74 /* libPods-Finn.a */,
+				631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ED681364BA961BAFC389E78A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7E3C2EC4D6F1FE049FA5D47B /* Pods-Finn.debug.xcconfig */,
+				3B0670D3F8AFEB110418742F /* Pods-Finn.release.xcconfig */,
+				4F735077D7243DF9728F802D /* Pods-FinnTests.debug.xcconfig */,
+				1330092F4A2373F1232CF9DF /* Pods-FinnTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		FD0F40611B064FD000B6C423 = {
+			isa = PBXGroup;
+			children = (
+				FD0F406C1B064FD000B6C423 /* Finn */,
+				FD0F40821B064FD000B6C423 /* FinnTests */,
+				FD0F406B1B064FD000B6C423 /* Products */,
+				ED681364BA961BAFC389E78A /* Pods */,
+				DF4144B910BC59C4452B7AA3 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		FD0F406B1B064FD000B6C423 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F406A1B064FD000B6C423 /* Finn.app */,
+				FD0F407F1B064FD000B6C423 /* FinnTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FD0F406C1B064FD000B6C423 /* Finn */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F406F1B064FD000B6C423 /* AppDelegate.swift */,
+				FD0F40711B064FD000B6C423 /* ViewController.swift */,
+				FD0F40911B0653A700B6C423 /* FinnPickerView.swift */,
+				FD0F40971B06555700B6C423 /* Restaurant.swift */,
+				FD0F40931B06542F00B6C423 /* Hex.swift */,
+				FD0F40951B06544100B6C423 /* Picture.swift */,
+				FD0F40901B06509000B6C423 /* BridgeHeader.h */,
+				FD0F40731B064FD000B6C423 /* Main.storyboard */,
+				FD0F40761B064FD000B6C423 /* Images.xcassets */,
+				FD0F40781B064FD000B6C423 /* LaunchScreen.xib */,
+				FD0F406D1B064FD000B6C423 /* Supporting Files */,
+			);
+			path = Finn;
+			sourceTree = "<group>";
+		};
+		FD0F406D1B064FD000B6C423 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F406E1B064FD000B6C423 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FD0F40821B064FD000B6C423 /* FinnTests */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40851B064FD000B6C423 /* FinnTests.swift */,
+				FD0F40831B064FD000B6C423 /* Supporting Files */,
+			);
+			path = FinnTests;
+			sourceTree = "<group>";
+		};
+		FD0F40831B064FD000B6C423 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FD0F40841B064FD000B6C423 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FD0F40691B064FD000B6C423 /* Finn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD0F40891B064FD000B6C423 /* Build configuration list for PBXNativeTarget "Finn" */;
+			buildPhases = (
+				D604AC5F5C5AA98EE24C7FCF /* Check Pods Manifest.lock */,
+				FD0F40661B064FD000B6C423 /* Sources */,
+				FD0F40671B064FD000B6C423 /* Frameworks */,
+				FD0F40681B064FD000B6C423 /* Resources */,
+				FE86F43FFF3AB77CDDEBA9BB /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Finn;
+			productName = Finn;
+			productReference = FD0F406A1B064FD000B6C423 /* Finn.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FD0F407E1B064FD000B6C423 /* FinnTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD0F408C1B064FD000B6C423 /* Build configuration list for PBXNativeTarget "FinnTests" */;
+			buildPhases = (
+				94636002A62F63DC9A142906 /* Check Pods Manifest.lock */,
+				FD0F407B1B064FD000B6C423 /* Sources */,
+				FD0F407C1B064FD000B6C423 /* Frameworks */,
+				FD0F407D1B064FD000B6C423 /* Resources */,
+				1046A7E9FDFE554DFEB72076 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FD0F40811B064FD000B6C423 /* PBXTargetDependency */,
+			);
+			name = FinnTests;
+			productName = FinnTests;
+			productReference = FD0F407F1B064FD000B6C423 /* FinnTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FD0F40621B064FD000B6C423 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = garethpaul;
+				TargetAttributes = {
+					FD0F40691B064FD000B6C423 = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
+					FD0F407E1B064FD000B6C423 = {
+						CreatedOnToolsVersion = 6.3.1;
+						TestTargetID = FD0F40691B064FD000B6C423;
+					};
+				};
+			};
+			buildConfigurationList = FD0F40651B064FD000B6C423 /* Build configuration list for PBXProject "Finn" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FD0F40611B064FD000B6C423;
+			productRefGroup = FD0F406B1B064FD000B6C423 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FD0F40691B064FD000B6C423 /* Finn */,
+				FD0F407E1B064FD000B6C423 /* FinnTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FD0F40681B064FD000B6C423 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD0F40751B064FD000B6C423 /* Main.storyboard in Resources */,
+				FD0F407A1B064FD000B6C423 /* LaunchScreen.xib in Resources */,
+				FD0F40771B064FD000B6C423 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD0F407D1B064FD000B6C423 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1046A7E9FDFE554DFEB72076 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		94636002A62F63DC9A142906 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D604AC5F5C5AA98EE24C7FCF /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FE86F43FFF3AB77CDDEBA9BB /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Finn/Pods-Finn-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FD0F40661B064FD000B6C423 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD0F40921B0653A700B6C423 /* FinnPickerView.swift in Sources */,
+				FD0F40961B06544200B6C423 /* Picture.swift in Sources */,
+				FD0F40981B06555700B6C423 /* Restaurant.swift in Sources */,
+				FD0F40941B06542F00B6C423 /* Hex.swift in Sources */,
+				FD0F40721B064FD000B6C423 /* ViewController.swift in Sources */,
+				FD0F40701B064FD000B6C423 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD0F407B1B064FD000B6C423 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD0F40861B064FD000B6C423 /* FinnTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FD0F40811B064FD000B6C423 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FD0F40691B064FD000B6C423 /* Finn */;
+			targetProxy = FD0F40801B064FD000B6C423 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FD0F40731B064FD000B6C423 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD0F40741B064FD000B6C423 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		FD0F40781B064FD000B6C423 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD0F40791B064FD000B6C423 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FD0F40871B064FD000B6C423 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gjones/Dropbox/workspace/github/Finn/Finn/BridgeHeader.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FD0F40881B064FD000B6C423 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gjones/Dropbox/workspace/github/Finn/Finn/BridgeHeader.h;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FD0F408A1B064FD000B6C423 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7E3C2EC4D6F1FE049FA5D47B /* Pods-Finn.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Finn/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FD0F408B1B064FD000B6C423 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B0670D3F8AFEB110418742F /* Pods-Finn.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Finn/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		FD0F408D1B064FD000B6C423 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4F735077D7243DF9728F802D /* Pods-FinnTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FinnTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Finn.app/Finn";
+			};
+			name = Debug;
+		};
+		FD0F408E1B064FD000B6C423 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1330092F4A2373F1232CF9DF /* Pods-FinnTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FinnTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Finn.app/Finn";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FD0F40651B064FD000B6C423 /* Build configuration list for PBXProject "Finn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD0F40871B064FD000B6C423 /* Debug */,
+				FD0F40881B064FD000B6C423 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FD0F40891B064FD000B6C423 /* Build configuration list for PBXNativeTarget "Finn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD0F408A1B064FD000B6C423 /* Debug */,
+				FD0F408B1B064FD000B6C423 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FD0F408C1B064FD000B6C423 /* Build configuration list for PBXNativeTarget "FinnTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD0F408D1B064FD000B6C423 /* Debug */,
+				FD0F408E1B064FD000B6C423 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FD0F40621B064FD000B6C423 /* Project object */;
+}
