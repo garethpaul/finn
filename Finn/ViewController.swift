@@ -57,6 +57,7 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate {
 
             // store the Restaurants in an array
             self.restaurants = fetchedRestaurants
+            println(self.restaurants.count)
 
             // Setup initial card views
             self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
@@ -95,7 +96,7 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate {
         } else {
             println("Restaurant skipped!")
         }
-
+        
         // Switch the topCard with the bottomCard
         topCardView = bottomCardView
 
@@ -105,6 +106,7 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate {
             createRestaurantView(bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
             // Create a new bottom card view
 
+            bottomCardView = createRestaurantView(bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
             bottomCardView.alpha = 0.0
 
             // Insert a new bottomCard
