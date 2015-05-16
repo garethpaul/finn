@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import MDCSwipeToChoose
+
 
 
 class FinnPickerView : MDCSwipeToChooseView {

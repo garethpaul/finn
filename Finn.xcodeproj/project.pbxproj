@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		26A7AFDD5AD83F2ED045F7F1 /* libPods-Finn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D89C6C57A467507000F3F74 /* libPods-Finn.a */; };
-		91E9A4AD3A3D31318040AA31 /* libPods-FinnTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */; };
+		715EF09BAABFCE65D7BB1ECF /* Pods_FinnTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC06906AF53A89846BB0420 /* Pods_FinnTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		7F36148C1B06D2E60068F1AB /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F36148B1B06D2E60068F1AB /* CoreLocation.framework */; };
+		A48770B58D901332A5FE1DD2 /* Pods_Finn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBE39DBC214FD000E36EA7 /* Pods_Finn.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		FD0F40701B064FD000B6C423 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F406F1B064FD000B6C423 /* AppDelegate.swift */; };
 		FD0F40721B064FD000B6C423 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40711B064FD000B6C423 /* ViewController.swift */; };
 		FD0F40751B064FD000B6C423 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FD0F40731B064FD000B6C423 /* Main.storyboard */; };
@@ -39,10 +40,11 @@
 /* Begin PBXFileReference section */
 		1330092F4A2373F1232CF9DF /* Pods-FinnTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FinnTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B0670D3F8AFEB110418742F /* Pods-Finn.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Finn.release.xcconfig"; path = "Pods/Target Support Files/Pods-Finn/Pods-Finn.release.xcconfig"; sourceTree = "<group>"; };
-		3D89C6C57A467507000F3F74 /* libPods-Finn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Finn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F735077D7243DF9728F802D /* Pods-FinnTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FinnTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests.debug.xcconfig"; sourceTree = "<group>"; };
-		631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FinnTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		63BBE39DBC214FD000E36EA7 /* Pods_Finn.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Finn.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E3C2EC4D6F1FE049FA5D47B /* Pods-Finn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Finn.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Finn/Pods-Finn.debug.xcconfig"; sourceTree = "<group>"; };
+		7F36148B1B06D2E60068F1AB /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		7FC06906AF53A89846BB0420 /* Pods_FinnTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FinnTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD0F406A1B064FD000B6C423 /* Finn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD0F406E1B064FD000B6C423 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FD0F406F1B064FD000B6C423 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -70,7 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26A7AFDD5AD83F2ED045F7F1 /* libPods-Finn.a in Frameworks */,
+				7F36148C1B06D2E60068F1AB /* CoreLocation.framework in Frameworks */,
+				A48770B58D901332A5FE1DD2 /* Pods_Finn.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91E9A4AD3A3D31318040AA31 /* libPods-FinnTests.a in Frameworks */,
+				715EF09BAABFCE65D7BB1ECF /* Pods_FinnTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,8 +91,9 @@
 		DF4144B910BC59C4452B7AA3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3D89C6C57A467507000F3F74 /* libPods-Finn.a */,
-				631BEFE2A1DF63495A2F8856 /* libPods-FinnTests.a */,
+				7F36148B1B06D2E60068F1AB /* CoreLocation.framework */,
+				63BBE39DBC214FD000E36EA7 /* Pods_Finn.framework */,
+				7FC06906AF53A89846BB0420 /* Pods_FinnTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -217,6 +221,7 @@
 				FD0F40671B064FD000B6C423 /* Frameworks */,
 				FD0F40681B064FD000B6C423 /* Resources */,
 				FE86F43FFF3AB77CDDEBA9BB /* Copy Pods Resources */,
+				44464A7F7A085660445AB320 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -236,6 +241,7 @@
 				FD0F407C1B064FD000B6C423 /* Frameworks */,
 				FD0F407D1B064FD000B6C423 /* Resources */,
 				1046A7E9FDFE554DFEB72076 /* Copy Pods Resources */,
+				367FDC649BF7D962F978F085 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -258,6 +264,11 @@
 				TargetAttributes = {
 					FD0F40691B064FD000B6C423 = {
 						CreatedOnToolsVersion = 6.3.1;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					FD0F407E1B064FD000B6C423 = {
 						CreatedOnToolsVersion = 6.3.1;
@@ -318,6 +329,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		367FDC649BF7D962F978F085 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FinnTests/Pods-FinnTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		44464A7F7A085660445AB320 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Finn/Pods-Finn-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		94636002A62F63DC9A142906 /* Check Pods Manifest.lock */ = {
@@ -464,7 +505,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gjones/Dropbox/workspace/github/Finn/Finn/BridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gareth/tmp/finn/Finn/BridgeHeader.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -502,7 +543,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = /Users/gjones/Dropbox/workspace/github/Finn/Finn/BridgeHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = /Users/gareth/tmp/finn/Finn/BridgeHeader.h;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

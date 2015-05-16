@@ -9,8 +9,21 @@
 import UIKit
 import Foundation
 import CoreData
+import CoreLocation
+import MDCSwipeToChoose
 
-class ViewController: UIViewController, MDCSwipeToChooseDelegate {
+extension Double {
+    func format(f: String) -> String {
+        return String(format: "%\(f)f", self)
+    }
+}
+
+
+
+class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationManagerDelegate {
+    
+    
+    let locationManager = CLLocationManager()
 
     // Set the button details
     let buttonDiameter: CGFloat = 80
@@ -35,6 +48,18 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate {
     // Main view load
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        
+        locationManager.requestWhenInUseAuthorization()
+        
+        if (CLLocationManager.locationServicesEnabled())
+        {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
+        
+
 
         // Setup the logo to display on the navibation controller
         lView = UIImageView(frame: CGRectMake(0, 0, 75, 23))
@@ -52,30 +77,48 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate {
         self.navigationController?.navigationBar.topItem?.title = ""
         self.navigationController?.navigationBar.barTintColor = toColor("4A90E2")
 
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        var locValue : CLLocationCoordinate2D = manager.location.coordinate
+        var lat = locValue.latitude.format(".2")
+        var lon = locValue.longitude.format(".2")
+        println(lat)
+        println(lon)
+        
         // Fetch some tweets/Restaurants
-        APIClient.fetchRestaurants({(fetchedRestaurants: Array<Restaurant>) -> Void in
-
+        let api = APIClient()
+        api.getRestaurant(lat, lon: lon) {(fetchedRestaurants: Array<Restaurant>) in
+            
             // store the Restaurants in an array
             self.restaurants = fetchedRestaurants
             println(self.restaurants.count)
-
+            
             // Setup initial card views
             self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
-
+            
             // Append the card to the view
             self.view.addSubview(self.topCardView)
-
+            
             // Append the "bottom" card under the top card
             self.bottomCardView = self.createRestaurantView(self.bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
             self.view.insertSubview(self.bottomCardView, belowSubview: self.topCardView)
-
+            
             // constructors see functions below...
             self.constructBackground()
             self.constructNopeButton()
             self.constructLikeButton()
-        })
+        
+        }
+        
+        
 
     }
+
+    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+            println("Error while updating location:" + error.localizedDescription)
+    }
+    
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
