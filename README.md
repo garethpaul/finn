@@ -79,4 +79,4 @@ Keep changes small and tied to the project that is already present in this repos
 
 Prior README summary:
 
-> finn <!-- README-OVERVIEW-IMAGE --> App for finding Restaurants/Food etc
+> finn App for finding Restaurants/Food etc
