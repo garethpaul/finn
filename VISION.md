@@ -1,0 +1,48 @@
+## Finn Vision
+
+Finn is a Swift iOS app for finding restaurants and food, with a swipe-oriented
+UI and network-backed restaurant data.
+
+The repository is useful as a legacy iOS sample combining CocoaPods, Alamofire,
+and card-style restaurant selection. Basic context lives in [`README.md`](README.md).
+
+The goal is to keep the app recoverable and understandable while making API,
+location, and credential boundaries explicit.
+
+The current focus is:
+
+Priority:
+
+- Preserve the restaurant model, swipe UI, and network API flow
+- Keep CocoaPods setup and workspace expectations visible
+- Avoid committing API keys, private endpoints, signing material, or location data
+- Keep old Swift/iOS assumptions clear
+
+Next priorities:
+
+- Add README setup and verification details
+- Move API configuration into documented local settings
+- Modernize Swift, Alamofire, MDCSwipeToChoose, and iOS target in a dedicated pass
+- Add tests or manual checklists for restaurant loading and card interactions
+
+Contribution rules:
+
+- One PR = one focused API, UI, build, or documentation change.
+- Open the workspace and verify app behavior after `pod install`.
+- Keep credentials and signing files out of git.
+- Document any external API or location behavior change.
+
+## Security And Privacy
+
+Restaurant discovery can involve location and preference data. Do not add
+analytics, tracking, or hidden network calls without explicit documentation and
+user control.
+
+API credentials and private endpoints must remain out of source control.
+
+## What We Will Not Merge For Now
+
+- Hardcoded real API credentials or private endpoints
+- Background location tracking
+- Broad Swift migrations bundled with feature changes
+- Generated signing material or local paths
