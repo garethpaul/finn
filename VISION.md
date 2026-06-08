@@ -1,5 +1,8 @@
 ## Finn Vision
 
+This document explains the current state and direction of the project.
+Project overview and developer docs: [`README.md`](README.md)
+
 Finn is a Swift iOS app for finding restaurants and food, with a swipe-oriented
 UI and network-backed restaurant data.
 
