@@ -1,5 +1,8 @@
 # finn
 
+<!-- README-OVERVIEW-IMAGE -->
+![Project overview](docs/readme-overview.svg)
+
 ## Overview
 
 `garethpaul/finn` is an Apple platform application or Objective-C/Swift sample. App for finding Restaurants/Food etc
@@ -77,4 +80,3 @@ Keep changes small and tied to the project that is already present in this repos
 Prior README summary:
 
 > finn <!-- README-OVERVIEW-IMAGE --> App for finding Restaurants/Food etc
-
