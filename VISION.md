@@ -46,3 +46,6 @@ API credentials and private endpoints must remain out of source control.
 - Background location tracking
 - Broad Swift migrations bundled with feature changes
 - Generated signing material or local paths
+
+This list is a roadmap guardrail, not a permanent rule.
+Strong user demand and strong technical rationale can change it.
