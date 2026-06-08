@@ -12,19 +12,23 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 ## Repository Contents
 
 - `README.md` - project overview and local usage notes
+- `CHANGES.md` - concise history of maintenance changes
+- `Makefile` - local verification entry point
 - `Podfile` - Apple platform dependency metadata
 - `Finn` - source or example code
 - `Finn.xcodeproj` - Xcode project file
+- `Finn.xcworkspace` - CocoaPods workspace to open after dependency install
 - `FinnTests` - source or example code
 - `Podfile.lock` - Apple platform dependency metadata
 - `SECURITY.md` - security reporting and disclosure guidance
+- `scripts/check-baseline.sh` - static checks for API config, lockfile, location logging, and card queue guardrails
 - `VISION.md` - project direction and maintenance guardrails
 
 Additional scan context:
 
 - Source directories: Finn, FinnTests
 - Dependency and build manifests: Podfile, Podfile.lock
-- Entry points or build surfaces: Finn.xcodeproj
+- Entry points or build surfaces: Finn.xcworkspace, Finn.xcodeproj
 - Test-looking files: FinnTests/FinnTests.swift, FinnTests/Info.plist
 
 ## Getting Started
@@ -47,27 +51,40 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 ## Running or Using the Project
 
-- Open `Finn.xcodeproj` in Xcode, choose the app or sample scheme, and run it on the matching simulator/device.
+- Open `Finn.xcworkspace` in Xcode after `pod install`, choose the app or sample scheme, and run it on the matching simulator/device.
+- Configure the restaurant API endpoint locally with the `FINN_API_BASE_URL` build setting. Use HTTPS because coordinates are sent as request parameters, and do not commit private endpoints or API credentials.
 
 ## Testing and Verification
 
-- Xcode's test action or `xcodebuild test` with the appropriate scheme and destination
+Run the static baseline:
+
+```bash
+make check
+```
+
+The baseline verifies CocoaPods lockfile expectations, workspace guidance,
+local API endpoint configuration, location data logging guardrails, and safe
+card queue handling. For functional testing, use Xcode's test action or
+`xcodebuild test` with the appropriate scheme and destination.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
 ## Configuration and Secrets
 
-- No required secret or credential file was identified in the repository scan. If you add integrations later, keep secrets out of git.
+- `FINN_API_BASE_URL` is the local build setting used to configure the restaurant API endpoint.
+- Keep private endpoints, API credentials, signing files, and local `.xcconfig` files out of source control.
 
 ## Security and Privacy Notes
 
 - Review changes touching network requests, sockets, or service endpoints; examples from the scan include Finn/Info.plist, FinnTests/Info.plist, Podfile.
 - Review changes touching mobile permissions or privacy-sensitive device data; examples from the scan include Finn/Info.plist, Finn/ViewController.swift.
 - Review changes touching file, media, JSON, XML, CSV, OCR, or data parsing; examples from the scan include Finn/API.swift, Finn/FinnPickerView.swift, Finn/Info.plist, Finn/Picture.swift, and 4 more.
+- Avoid logging location data, restaurant preferences, or private API response payloads.
 
 ## Maintenance Notes
 
 - This looks like an Apple platform project or sample. Xcode, Swift, CocoaPods, and deployment target versions may need to match the original project era.
+- Run `make check` before pushing changes that touch CocoaPods, API configuration, location handling, or card queue behavior.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

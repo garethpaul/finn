@@ -14,22 +14,29 @@ class APIClient {
     typealias JSON = AnyObject
     typealias JSONDictionary = Dictionary<String, JSON>
     typealias JSONArray = Array<JSON>
-    let url = ""
+    var url: String {
+        return NSBundle.mainBundle().objectForInfoDictionaryKey("FinnAPIBaseURL") as? String ?? ""
+    }
     
     func getRestaurant(lat: String, lon: String, completion: (result: Array<Restaurant>) -> Void){
         var new_result = Array<Restaurant>()
-        Alamofire.request(.GET, url, parameters: ["lat": lat, "lon": lon]).responseJSON() {
+        let requestURL = url
+
+        if requestURL.isEmpty || requestURL.hasPrefix("$(") || !requestURL.hasPrefix("https://") {
+            completion(result: new_result)
+            return
+        }
+
+        Alamofire.request(.GET, requestURL, parameters: ["lat": lat, "lon": lon]).responseJSON() {
             (_, _, JSON, _) in
 
             if let json = JSON as? Dictionary<String, AnyObject> {
                 if let restaurants = json["data"] as? [[String : AnyObject]] {
                     for r in restaurants {
-                        let name = r["name"]! as! String
-                        let image = r["image"]! as! String
-                        new_result.append(Restaurant(name: name, image: image))
+                        if let name = r["name"] as? String, image = r["image"] as? String {
+                            new_result.append(Restaurant(name: name, image: image))
+                        }
                     }
-                    
-                    
                 }
             }
             completion(result: new_result)

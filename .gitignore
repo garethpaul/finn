@@ -31,3 +31,9 @@ Pods/
 # Carthage/Checkouts
 
 Carthage/Build
+
+# Local credentials and per-machine build settings
+.env
+.env.*
+*.xcconfig
+!*.xcconfig.example

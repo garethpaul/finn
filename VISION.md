@@ -21,10 +21,19 @@ Priority:
 - Avoid committing API keys, private endpoints, signing material, or location data
 - Keep old Swift/iOS assumptions clear
 
+Current baseline:
+
+- `scripts/check-baseline.sh` and `make check` verify the CocoaPods lockfile,
+  workspace guidance, API configuration, and location guardrails.
+- `FINN_API_BASE_URL` feeds the `FinnAPIBaseURL` Info.plist key so private API
+  endpoints stay in local HTTPS build settings.
+- Rounded location coordinates are not logged from the view controller.
+- Card queue setup guards against API responses with too few restaurants.
+
 Next priorities:
 
-- Add README setup and verification details
-- Move API configuration into documented local settings
+- Verify the app with Xcode after `pod install` on a machine with the legacy toolchain
+- Add XCTest coverage around API parsing and card queue behavior
 - Modernize Swift, Alamofire, MDCSwipeToChoose, and iOS target in a dedicated pass
 - Add tests or manual checklists for restaurant loading and card interactions
 

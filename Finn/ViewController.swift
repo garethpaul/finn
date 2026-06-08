@@ -83,8 +83,6 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
         var locValue : CLLocationCoordinate2D = manager.location.coordinate
         var lat = locValue.latitude.format(".2")
         var lon = locValue.longitude.format(".2")
-        println(lat)
-        println(lon)
         
         // Fetch some tweets/Restaurants
         let api = APIClient()
@@ -92,7 +90,10 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
             
             // store the Restaurants in an array
             self.restaurants = fetchedRestaurants
-            println(self.restaurants.count)
+
+            if self.restaurants.count < 2 {
+                return
+            }
             
             // Setup initial card views
             self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
@@ -146,9 +147,7 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
         // See if we have some Restaurants to show.
         if(self.restaurants.count > 0) {
 
-            createRestaurantView(bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
             // Create a new bottom card view
-
             bottomCardView = createRestaurantView(bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
             bottomCardView.alpha = 0.0
 
@@ -302,4 +301,3 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
     
 }
-
