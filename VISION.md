@@ -40,7 +40,7 @@ user control.
 
 API credentials and private endpoints must remain out of source control.
 
-## What We Will Not Merge For Now
+## What We Will Not Merge (For Now)
 
 - Hardcoded real API credentials or private endpoints
 - Background location tracking
