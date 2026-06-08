@@ -34,6 +34,11 @@ Contribution rules:
 
 ## Security And Privacy
 
+Canonical security policy and reporting:
+
+- [`SECURITY.md`](SECURITY.md)
+
+
 Restaurant discovery can involve location and preference data. Do not add
 analytics, tracking, or hidden network calls without explicit documentation and
 user control.
