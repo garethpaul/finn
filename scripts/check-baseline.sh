@@ -59,6 +59,17 @@ if ! grep -Fq "FinnAPIBaseURL" "$ROOT_DIR/Finn/Info.plist" ||
   exit 1
 fi
 
+if command -v python3 >/dev/null 2>&1; then
+  python3 - "$ROOT_DIR/Finn/Info.plist" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+
+ET.parse(sys.argv[1])
+PY
+else
+  printf '%s\n' "Skipping Info.plist XML parse: python3 is not installed."
+fi
+
 api="$ROOT_DIR/Finn/API.swift"
 if ! grep -Fq "FinnAPIBaseURL" "$api" ||
   ! grep -Fq "requestURL.isEmpty" "$api" ||
