@@ -3,6 +3,7 @@ set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-maintenance-baseline.md"
+IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-image-loading-guards.md"
 
 require_file() {
   path=$1
@@ -25,8 +26,11 @@ for path in \
   "Finn.xcodeproj/project.pbxproj" \
   "Finn/API.swift" \
   "Finn/Info.plist" \
+  "Finn/FinnPickerView.swift" \
+  "Finn/Picture.swift" \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
+  "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md"; do
   require_file "$path"
 done
@@ -90,6 +94,14 @@ if grep -Fq "println(lat)" "$view" ||
   exit 1
 fi
 
+if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
+  grep -Fq "UIImage(data: data)!" "$ROOT_DIR/Finn/Picture.swift" ||
+  ! grep -Fq "if let url = NSURL(string: url_string)" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
+  ! grep -Fq "if let imageData = data" "$ROOT_DIR/Finn/Picture.swift"; then
+  printf '%s\n' "Image loading must guard invalid URLs and failed image decoding." >&2
+  exit 1
+fi
+
 if ! grep -Fq "*.xcconfig" "$ROOT_DIR/.gitignore" ||
   ! grep -Fq ".env" "$ROOT_DIR/.gitignore"; then
   printf '%s\n' "Local API and signing config files must stay ignored." >&2
@@ -104,6 +116,11 @@ fi
 
 if ! grep -Fq "status: completed" "$PLAN"; then
   printf '%s\n' "Plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$IMAGE_PLAN"; then
+  printf '%s\n' "Image loading guard plan must be marked completed." >&2
   exit 1
 fi
 

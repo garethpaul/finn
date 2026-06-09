@@ -9,3 +9,5 @@
   few restaurants.
 - Required the configured restaurant API endpoint to use HTTPS before sending
   coordinate parameters.
+- Guarded restaurant image URL creation and image decoding to avoid crashes on
+  bad image data.

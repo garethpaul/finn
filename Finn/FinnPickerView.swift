@@ -70,10 +70,11 @@ class FinnPickerView : MDCSwipeToChooseView {
     func loadImageView() {
         let pic = Picture()
         let url_string = restaurant!.image
-        pic.get(NSURL(string: url_string)!, handler: {image, error in
-            let newImg = image
-            self.imageView.image = image
-        })
+        if let url = NSURL(string: url_string) {
+            pic.get(url, handler: {image, error in
+                self.imageView.image = image
+            })
+        }
 
 
     }
@@ -89,4 +90,3 @@ class FinnPickerView : MDCSwipeToChooseView {
             
         }
 }
-

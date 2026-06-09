@@ -9,7 +9,15 @@ class Picture{
         NSURLConnection.sendAsynchronousRequest(imageRequest,
             queue: NSOperationQueue.mainQueue(),
             completionHandler:{response, data, error in
-                handler(image: UIImage(data: data)!, error)
+                if error != nil {
+                    return
+                }
+
+                if let imageData = data {
+                    if let image = UIImage(data: imageData) {
+                        handler(image: image, error)
+                    }
+                }
         })
     }
 }
