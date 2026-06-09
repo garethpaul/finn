@@ -80,45 +80,44 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        if manager.location == nil {
+        if locations == nil || locations.count == 0 {
             return
         }
 
-        manager.stopUpdatingLocation()
-        var locValue : CLLocationCoordinate2D = manager.location.coordinate
-        var lat = locValue.latitude.format(".2")
-        var lon = locValue.longitude.format(".2")
-        
-        // Fetch some tweets/Restaurants
-        let api = APIClient()
-        api.getRestaurant(lat, lon: lon) {(fetchedRestaurants: Array<Restaurant>) in
-            
-            // store the Restaurants in an array
-            self.restaurants = fetchedRestaurants
+        if let location = locations[locations.count - 1] as? CLLocation {
+            manager.stopUpdatingLocation()
+            var locValue : CLLocationCoordinate2D = location.coordinate
+            var lat = locValue.latitude.format(".2")
+            var lon = locValue.longitude.format(".2")
 
-            if self.restaurants.count < 2 {
-                return
+            // Fetch some tweets/Restaurants
+            let api = APIClient()
+            api.getRestaurant(lat, lon: lon) {(fetchedRestaurants: Array<Restaurant>) in
+
+                // store the Restaurants in an array
+                self.restaurants = fetchedRestaurants
+
+                if self.restaurants.count < 2 {
+                    return
+                }
+
+                // Setup initial card views
+                self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
+
+                // Append the card to the view
+                self.view.addSubview(self.topCardView)
+
+                // Append the "bottom" card under the top card
+                self.bottomCardView = self.createRestaurantView(self.bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
+                self.view.insertSubview(self.bottomCardView, belowSubview: self.topCardView)
+
+                // constructors see functions below...
+                self.constructBackground()
+                self.constructNopeButton()
+                self.constructLikeButton()
+
             }
-            
-            // Setup initial card views
-            self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
-            
-            // Append the card to the view
-            self.view.addSubview(self.topCardView)
-            
-            // Append the "bottom" card under the top card
-            self.bottomCardView = self.createRestaurantView(self.bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
-            self.view.insertSubview(self.bottomCardView, belowSubview: self.topCardView)
-            
-            // constructors see functions below...
-            self.constructBackground()
-            self.constructNopeButton()
-            self.constructLikeButton()
-        
         }
-        
-        
-
     }
 
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {

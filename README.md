@@ -65,9 +65,9 @@ make check
 The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
 card queue handling. It also verifies that location updates stop after a usable
-fix or failure and that location failures do not log raw error details. For
-functional testing, use Xcode's test action or `xcodebuild test` with the
-appropriate scheme and destination.
+callback location or failure and that location failures do not log raw error
+details. For functional testing, use Xcode's test action or `xcodebuild test`
+with the appropriate scheme and destination.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -85,13 +85,15 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Restaurant image URLs should be loaded over HTTPS only.
 - Keep location updates scoped to the active restaurant lookup and avoid raw
   Core Location error details in logs.
+- Use the delegate-provided callback location for lookups instead of reading
+  potentially stale manager state.
 
 ## Maintenance Notes
 
 - This looks like an Apple platform project or sample. Xcode, Swift, CocoaPods, and deployment target versions may need to match the original project era.
 - Run `make check` before pushing changes that touch CocoaPods, API configuration, location handling, or card queue behavior.
-- Keep the location update boundary plan in `docs/plans/` aligned with any
-  changes to coordinate lookup behavior.
+- Keep the location update and callback payload plans in `docs/plans/` aligned
+  with any changes to coordinate lookup behavior.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Used the latest delegate-provided location payload for restaurant lookups
+  instead of reading manager location state.
 - Required HTTPS for restaurant image downloads and removed swipe preference
   event console logs.
 - Stopped location updates after the first usable fix or failure and replaced

@@ -30,6 +30,8 @@ Current baseline:
 - Rounded location coordinates are not logged from the view controller.
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.
+- Restaurant lookups use the delegate-provided callback location instead of
+  reading potentially stale manager state.
 - Card queue setup guards against API responses with too few restaurants.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
 
@@ -41,6 +43,7 @@ Next priorities:
 - Add tests or manual checklists for restaurant loading and card interactions
 - Preserve the one-shot foreground location lookup boundary when modernizing
   Core Location handling
+- Keep callback-location handling covered when changing the location delegate
 
 Contribution rules:
 

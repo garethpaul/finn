@@ -6,6 +6,7 @@ PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-maintenance-baseline.md"
 IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-image-loading-guards.md"
 LOCATION_UPDATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-update-boundary.md"
 TRANSPORT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-transport-preference-logs.md"
+LOCATION_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-callback-payload.md"
 
 require_file() {
   path=$1
@@ -32,6 +33,7 @@ for path in \
   "Finn/Picture.swift" \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
+  "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
   "docs/plans/2026-06-09-image-transport-preference-logs.md" \
@@ -96,11 +98,14 @@ if grep -Fq "println(lat)" "$view" ||
   grep -Fq "Error while updating location" "$view" ||
   grep -Fq "Restaurant saved!" "$view" ||
   grep -Fq "Restaurant skipped!" "$view" ||
-  ! grep -Fq "if manager.location == nil" "$view" ||
+  ! grep -Fq "if locations == nil || locations.count == 0" "$view" ||
+  ! grep -Fq "as? CLLocation" "$view" ||
+  ! grep -Fq "location.coordinate" "$view" ||
+  grep -Fq "manager.location.coordinate" "$view" ||
   ! grep -Fq "manager.stopUpdatingLocation()" "$view" ||
   ! grep -Fq "self.restaurants.count < 2" "$view" ||
   grep -Eq '^[[:space:]]*createRestaurantView\(bottomCardViewFrame\(\), res: self\.restaurants\.removeAtIndex\(0\)\)' "$view"; then
-  printf '%s\n' "View controller must avoid raw location logs, stop location updates, and guard card removals." >&2
+  printf '%s\n' "View controller must avoid raw location logs, use callback locations, stop updates, and guard card removals." >&2
   exit 1
 fi
 
@@ -143,6 +148,11 @@ fi
 
 if ! grep -Fq "status: completed" "$TRANSPORT_PLAN"; then
   printf '%s\n' "Image transport and preference log plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$LOCATION_PAYLOAD_PLAN"; then
+  printf '%s\n' "Location callback payload plan must be marked completed." >&2
   exit 1
 fi
 
