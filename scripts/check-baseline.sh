@@ -8,6 +8,7 @@ LOCATION_UPDATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-update-boundary.m
 TRANSPORT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-transport-preference-logs.md"
 LOCATION_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-callback-payload.md"
 ENDPOINT_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-endpoint-url-parts.md"
+RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-guard.md"
 
 require_file() {
   path=$1
@@ -35,6 +36,7 @@ for path in \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
   "docs/plans/2026-06-09-api-endpoint-url-parts.md" \
+  "docs/plans/2026-06-09-api-restaurant-field-guard.md" \
   "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
@@ -61,6 +63,13 @@ if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "FINN_API_BASE_URL" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "location coordinates" "$ROOT_DIR/VISION.md"; then
   printf '%s\n' "VISION must describe the current API and location guardrails." >&2
+  exit 1
+fi
+
+if ! grep -Fq "lint: check" "$ROOT_DIR/Makefile" ||
+  ! grep -Fq "test: check" "$ROOT_DIR/Makefile" ||
+  ! grep -Fq "build: check" "$ROOT_DIR/Makefile"; then
+  printf '%s\n' "Makefile must expose lint, test, and build gates." >&2
   exit 1
 fi
 
@@ -98,6 +107,14 @@ if ! grep -Fq "FinnAPIBaseURL" "$api" ||
   grep -Fq 'let url = ""' "$api" ||
   grep -Eq 'r\["(name|image)"\]!' "$api"; then
   printf '%s\n' "API client must use parsed local HTTPS endpoint configuration and safe restaurant parsing." >&2
+  exit 1
+fi
+
+if ! grep -Fq "let cleanName = name.stringByTrimmingCharactersInSet" "$api" ||
+  ! grep -Fq "let cleanImage = image.stringByTrimmingCharactersInSet" "$api" ||
+  ! grep -Fq "!cleanName.isEmpty" "$api" ||
+  ! grep -Fq "!cleanImage.isEmpty" "$api"; then
+  printf '%s\n' "API client must reject blank restaurant names and image URLs before card creation." >&2
   exit 1
 fi
 
@@ -168,6 +185,11 @@ fi
 
 if ! grep -Fq "status: completed" "$ENDPOINT_PARTS_PLAN"; then
   printf '%s\n' "API endpoint URL parts plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$RESTAURANT_FIELDS_PLAN"; then
+  printf '%s\n' "API restaurant field guard plan must be marked completed." >&2
   exit 1
 fi
 

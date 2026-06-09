@@ -11,6 +11,8 @@
 - Added a static baseline guard and plan for the location update boundary.
 - Parsed the restaurant API endpoint and rejected missing hosts, userinfo,
   query strings, and fragments before sending coordinates.
+- Trimmed restaurant names and image URLs from API responses and skipped blank
+  fields before building cards.
 
 ## 2026-06-08
 

@@ -53,7 +53,11 @@ class APIClient {
                     if let restaurants = json["data"] as? [[String : AnyObject]] {
                         for r in restaurants {
                             if let name = r["name"] as? String, image = r["image"] as? String {
-                                new_result.append(Restaurant(name: name, image: image))
+                                let cleanName = name.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                let cleanImage = image.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                if !cleanName.isEmpty && !cleanImage.isEmpty {
+                                    new_result.append(Restaurant(name: cleanName, image: cleanImage))
+                                }
                             }
                         }
                     }

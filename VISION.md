@@ -35,6 +35,8 @@ Current baseline:
 - Restaurant lookups use the delegate-provided callback location instead of
   reading potentially stale manager state.
 - Card queue setup guards against API responses with too few restaurants.
+- Restaurant names and image URLs from the API are trimmed and blank values are
+  skipped before card creation.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
 
 Next priorities:
