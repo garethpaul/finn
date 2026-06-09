@@ -138,15 +138,6 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
 
     func view(view: UIView!, wasChosenWithDirection direction: MDCSwipeDirection) {
-
-        // If there is a swipe perform an action on direction
-        let tpv = view as! FinnPickerView
-        if (direction == MDCSwipeDirection.Right) {
-            println("Restaurant saved!")
-        } else {
-            println("Restaurant skipped!")
-        }
-        
         // Switch the topCard with the bottomCard
         topCardView = bottomCardView
 

@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Required HTTPS for restaurant image downloads and removed swipe preference
+  event console logs.
 - Stopped location updates after the first usable fix or failure and replaced
   raw Core Location error logging with a generic diagnostic.
 - Added a static baseline guard and plan for the location update boundary.

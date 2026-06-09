@@ -5,6 +5,7 @@ ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-maintenance-baseline.md"
 IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-image-loading-guards.md"
 LOCATION_UPDATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-update-boundary.md"
+TRANSPORT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-transport-preference-logs.md"
 
 require_file() {
   path=$1
@@ -33,6 +34,7 @@ for path in \
   "FinnTests/FinnTests.swift" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
+  "docs/plans/2026-06-09-image-transport-preference-logs.md" \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md"; do
   require_file "$path"
 done
@@ -92,6 +94,8 @@ if grep -Fq "println(lat)" "$view" ||
   grep -Fq "println(lon)" "$view" ||
   grep -Fq "error.localizedDescription" "$view" ||
   grep -Fq "Error while updating location" "$view" ||
+  grep -Fq "Restaurant saved!" "$view" ||
+  grep -Fq "Restaurant skipped!" "$view" ||
   ! grep -Fq "if manager.location == nil" "$view" ||
   ! grep -Fq "manager.stopUpdatingLocation()" "$view" ||
   ! grep -Fq "self.restaurants.count < 2" "$view" ||
@@ -100,11 +104,13 @@ if grep -Fq "println(lat)" "$view" ||
   exit 1
 fi
 
+picture="$ROOT_DIR/Finn/Picture.swift"
 if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
-  grep -Fq "UIImage(data: data)!" "$ROOT_DIR/Finn/Picture.swift" ||
+  grep -Fq "UIImage(data: data)!" "$picture" ||
   ! grep -Fq "if let url = NSURL(string: url_string)" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
-  ! grep -Fq "if let imageData = data" "$ROOT_DIR/Finn/Picture.swift"; then
-  printf '%s\n' "Image loading must guard invalid URLs and failed image decoding." >&2
+  ! grep -Fq '!url.absoluteString.hasPrefix("https://")' "$picture" ||
+  ! grep -Fq "if let imageData = data" "$picture"; then
+  printf '%s\n' "Image loading must guard invalid URLs, require HTTPS, and avoid failed image decoding." >&2
   exit 1
 fi
 
@@ -132,6 +138,11 @@ fi
 
 if ! grep -Fq "status: completed" "$LOCATION_UPDATE_PLAN"; then
   printf '%s\n' "Location update boundary plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$TRANSPORT_PLAN"; then
+  printf '%s\n' "Image transport and preference log plan must be marked completed." >&2
   exit 1
 fi
 

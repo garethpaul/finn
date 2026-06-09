@@ -5,6 +5,10 @@ class Picture{
 
     func get(url: NSURL, handler: ((image: UIImage, NSError!) -> Void))
     {
+        if !url.absoluteString.hasPrefix("https://") {
+            return
+        }
+
         var imageRequest: NSURLRequest = NSURLRequest(URL: url)
         NSURLConnection.sendAsynchronousRequest(imageRequest,
             queue: NSOperationQueue.mainQueue(),

@@ -31,6 +31,7 @@ Current baseline:
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.
 - Card queue setup guards against API responses with too few restaurants.
+- Restaurant image downloads require HTTPS and swipe preferences are not logged.
 
 Next priorities:
 

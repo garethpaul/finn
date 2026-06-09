@@ -82,6 +82,7 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Review changes touching mobile permissions or privacy-sensitive device data; examples from the scan include Finn/Info.plist, Finn/ViewController.swift.
 - Review changes touching file, media, JSON, XML, CSV, OCR, or data parsing; examples from the scan include Finn/API.swift, Finn/FinnPickerView.swift, Finn/Info.plist, Finn/Picture.swift, and 4 more.
 - Avoid logging location data, restaurant preferences, or private API response payloads.
+- Restaurant image URLs should be loaded over HTTPS only.
 - Keep location updates scoped to the active restaurant lookup and avoid raw
   Core Location error details in logs.
 
