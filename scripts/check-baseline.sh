@@ -7,6 +7,7 @@ IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-image-loading-guards.md"
 LOCATION_UPDATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-update-boundary.md"
 TRANSPORT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-transport-preference-logs.md"
 LOCATION_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-callback-payload.md"
+ENDPOINT_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-endpoint-url-parts.md"
 
 require_file() {
   path=$1
@@ -33,6 +34,7 @@ for path in \
   "Finn/Picture.swift" \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
+  "docs/plans/2026-06-09-api-endpoint-url-parts.md" \
   "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
@@ -82,12 +84,20 @@ fi
 
 api="$ROOT_DIR/Finn/API.swift"
 if ! grep -Fq "FinnAPIBaseURL" "$api" ||
-  ! grep -Fq "requestURL.isEmpty" "$api" ||
-  ! grep -Fq 'requestURL.hasPrefix("$(")' "$api" ||
-  ! grep -Fq '!requestURL.hasPrefix("https://")' "$api" ||
+  ! grep -Fq "configuredAPIURL" "$api" ||
+  ! grep -Fq "stringByTrimmingCharactersInSet" "$api" ||
+  ! grep -Fq "configuredURL.isEmpty" "$api" ||
+  ! grep -Fq 'configuredURL.hasPrefix("$(")' "$api" ||
+  ! grep -Fq 'endpointURL.scheme == "https"' "$api" ||
+  ! grep -Fq "endpointURL.user == nil" "$api" ||
+  ! grep -Fq "endpointURL.password == nil" "$api" ||
+  ! grep -Fq "endpointURL.query == nil" "$api" ||
+  ! grep -Fq "endpointURL.fragment == nil" "$api" ||
+  ! grep -Fq "if let host = endpointURL.host" "$api" ||
+  ! grep -Fq "!host.isEmpty" "$api" ||
   grep -Fq 'let url = ""' "$api" ||
   grep -Eq 'r\["(name|image)"\]!' "$api"; then
-  printf '%s\n' "API client must use local endpoint configuration and safe restaurant parsing." >&2
+  printf '%s\n' "API client must use parsed local HTTPS endpoint configuration and safe restaurant parsing." >&2
   exit 1
 fi
 
@@ -153,6 +163,11 @@ fi
 
 if ! grep -Fq "status: completed" "$LOCATION_PAYLOAD_PLAN"; then
   printf '%s\n' "Location callback payload plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$ENDPOINT_PARTS_PLAN"; then
+  printf '%s\n' "API endpoint URL parts plan must be marked completed." >&2
   exit 1
 fi
 

@@ -27,6 +27,8 @@ Current baseline:
   workspace guidance, API configuration, and location guardrails.
 - `FINN_API_BASE_URL` feeds the `FinnAPIBaseURL` Info.plist key so private API
   endpoints stay in local HTTPS build settings.
+- API endpoint validation parses the configured URL and rejects unresolved
+  placeholders, missing hosts, embedded userinfo, query strings, and fragments.
 - Rounded location coordinates are not logged from the view controller.
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.

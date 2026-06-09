@@ -52,7 +52,10 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 ## Running or Using the Project
 
 - Open `Finn.xcworkspace` in Xcode after `pod install`, choose the app or sample scheme, and run it on the matching simulator/device.
-- Configure the restaurant API endpoint locally with the `FINN_API_BASE_URL` build setting. Use HTTPS because coordinates are sent as request parameters, and do not commit private endpoints or API credentials.
+- Configure the restaurant API endpoint locally with the `FINN_API_BASE_URL`
+  build setting. Use an HTTPS URL with a host and no embedded username/password,
+  query string, or fragment because coordinates are sent as request parameters.
+  Do not commit private endpoints or API credentials.
 
 ## Testing and Verification
 
@@ -66,8 +69,10 @@ The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
 card queue handling. It also verifies that location updates stop after a usable
 callback location or failure and that location failures do not log raw error
-details. For functional testing, use Xcode's test action or `xcodebuild test`
-with the appropriate scheme and destination.
+details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
+hosts, unresolved build-setting placeholders, userinfo, query strings, and
+fragments before sending coordinates. For functional testing, use Xcode's test
+action or `xcodebuild test` with the appropriate scheme and destination.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 

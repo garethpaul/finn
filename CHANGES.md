@@ -9,6 +9,8 @@
 - Stopped location updates after the first usable fix or failure and replaced
   raw Core Location error logging with a generic diagnostic.
 - Added a static baseline guard and plan for the location update boundary.
+- Parsed the restaurant API endpoint and rejected missing hosts, userinfo,
+  query strings, and fragments before sending coordinates.
 
 ## 2026-06-08
 
