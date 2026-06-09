@@ -72,11 +72,12 @@ callback location or failure and that location failures do not log raw error
 details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
 fragments before sending coordinates. API restaurant fields are trimmed, and
-blank restaurant names or image URLs are skipped before card creation. The
-`make lint`, `make test`, and `make build` aliases run the same static baseline
-while this legacy sample has no narrower installed gates here. For functional
-testing, use Xcode's test action or `xcodebuild test` with the appropriate
-scheme and destination.
+blank restaurant names or image URLs are skipped before card creation. Picker
+views avoid force-unwrapping restaurant state while rendering names and images.
+The `make lint`, `make test`, and `make build` aliases run the same static
+baseline while this legacy sample has no narrower installed gates here. For
+functional testing, use Xcode's test action or `xcodebuild test` with the
+appropriate scheme and destination.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -94,6 +95,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Restaurant image URLs should be loaded over HTTPS only.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
+- Picker views should not force-unwrap restaurant state when rendering names or
+  images.
 - Keep location updates scoped to the active restaurant lookup and avoid raw
   Core Location error details in logs.
 - Use the delegate-provided callback location for lookups instead of reading

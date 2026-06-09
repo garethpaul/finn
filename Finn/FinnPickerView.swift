@@ -69,11 +69,13 @@ class FinnPickerView : MDCSwipeToChooseView {
 
     func loadImageView() {
         let pic = Picture()
-        let url_string = restaurant!.image
-        if let url = NSURL(string: url_string) {
-            pic.get(url, handler: {image, error in
-                self.imageView.image = image
-            })
+        if let restaurant = restaurant {
+            let url_string = restaurant.image
+            if let url = NSURL(string: url_string) {
+                pic.get(url, handler: {image, error in
+                    self.imageView.image = image
+                })
+            }
         }
 
 
@@ -81,7 +83,10 @@ class FinnPickerView : MDCSwipeToChooseView {
 
     func constructNameLabel() {
         let nameLabel: UILabel = UILabel(frame: infoView.bounds)
-        nameLabel.text = restaurant!.name
+        nameLabel.text = ""
+        if let restaurant = restaurant {
+            nameLabel.text = restaurant.name
+        }
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.font = UIFont.systemFontOfSize(20.0)
         nameLabel.adjustsFontSizeToFitWidth = true

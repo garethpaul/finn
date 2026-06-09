@@ -9,6 +9,7 @@ TRANSPORT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-transport-preference-logs.
 LOCATION_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-callback-payload.md"
 ENDPOINT_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-endpoint-url-parts.md"
 RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-guard.md"
+PICKER_RESTAURANT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-picker-restaurant-state-guard.md"
 
 require_file() {
   path=$1
@@ -37,6 +38,7 @@ for path in \
   "FinnTests/FinnTests.swift" \
   "docs/plans/2026-06-09-api-endpoint-url-parts.md" \
   "docs/plans/2026-06-09-api-restaurant-field-guard.md" \
+  "docs/plans/2026-06-09-picker-restaurant-state-guard.md" \
   "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
@@ -138,11 +140,14 @@ fi
 
 picture="$ROOT_DIR/Finn/Picture.swift"
 if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
+  grep -Fq "restaurant!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   grep -Fq "UIImage(data: data)!" "$picture" ||
   ! grep -Fq "if let url = NSURL(string: url_string)" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
+  ! grep -Fq "if let restaurant = restaurant" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
+  ! grep -Fq "nameLabel.text = restaurant.name" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   ! grep -Fq '!url.absoluteString.hasPrefix("https://")' "$picture" ||
   ! grep -Fq "if let imageData = data" "$picture"; then
-  printf '%s\n' "Image loading must guard invalid URLs, require HTTPS, and avoid failed image decoding." >&2
+  printf '%s\n' "Image loading and picker rendering must guard invalid URLs, missing restaurants, and failed image decoding." >&2
   exit 1
 fi
 
@@ -190,6 +195,11 @@ fi
 
 if ! grep -Fq "status: completed" "$RESTAURANT_FIELDS_PLAN"; then
   printf '%s\n' "API restaurant field guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$PICKER_RESTAURANT_PLAN"; then
+  printf '%s\n' "Picker restaurant state guard plan must be marked completed." >&2
   exit 1
 fi
 

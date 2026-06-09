@@ -37,6 +37,8 @@ Current baseline:
 - Card queue setup guards against API responses with too few restaurants.
 - Restaurant names and image URLs from the API are trimmed and blank values are
   skipped before card creation.
+- Picker views avoid force-unwrapping restaurant state while rendering card
+  names and images.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
 
 Next priorities:
@@ -48,6 +50,8 @@ Next priorities:
 - Preserve the one-shot foreground location lookup boundary when modernizing
   Core Location handling
 - Keep callback-location handling covered when changing the location delegate
+- Keep picker rendering tolerant of missing restaurant state during legacy UI
+  modernization
 
 Contribution rules:
 
