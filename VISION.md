@@ -28,6 +28,8 @@ Current baseline:
 - `FINN_API_BASE_URL` feeds the `FinnAPIBaseURL` Info.plist key so private API
   endpoints stay in local HTTPS build settings.
 - Rounded location coordinates are not logged from the view controller.
+- Location updates stop after a usable foreground fix or failure, and failure
+  logs avoid raw Core Location error details.
 - Card queue setup guards against API responses with too few restaurants.
 
 Next priorities:
@@ -36,6 +38,8 @@ Next priorities:
 - Add XCTest coverage around API parsing and card queue behavior
 - Modernize Swift, Alamofire, MDCSwipeToChoose, and iOS target in a dedicated pass
 - Add tests or manual checklists for restaurant loading and card interactions
+- Preserve the one-shot foreground location lookup boundary when modernizing
+  Core Location handling
 
 Contribution rules:
 

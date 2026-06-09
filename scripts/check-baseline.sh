@@ -4,6 +4,7 @@ set -eu
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-maintenance-baseline.md"
 IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-08-finn-image-loading-guards.md"
+LOCATION_UPDATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-update-boundary.md"
 
 require_file() {
   path=$1
@@ -31,6 +32,7 @@ for path in \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
+  "docs/plans/2026-06-09-location-update-boundary.md" \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md"; do
   require_file "$path"
 done
@@ -88,9 +90,13 @@ fi
 view="$ROOT_DIR/Finn/ViewController.swift"
 if grep -Fq "println(lat)" "$view" ||
   grep -Fq "println(lon)" "$view" ||
+  grep -Fq "error.localizedDescription" "$view" ||
+  grep -Fq "Error while updating location" "$view" ||
+  ! grep -Fq "if manager.location == nil" "$view" ||
+  ! grep -Fq "manager.stopUpdatingLocation()" "$view" ||
   ! grep -Fq "self.restaurants.count < 2" "$view" ||
   grep -Eq '^[[:space:]]*createRestaurantView\(bottomCardViewFrame\(\), res: self\.restaurants\.removeAtIndex\(0\)\)' "$view"; then
-  printf '%s\n' "View controller must avoid coordinate logging and unsafe card removals." >&2
+  printf '%s\n' "View controller must avoid raw location logs, stop location updates, and guard card removals." >&2
   exit 1
 fi
 
@@ -121,6 +127,11 @@ fi
 
 if ! grep -Fq "status: completed" "$IMAGE_PLAN"; then
   printf '%s\n' "Image loading guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$LOCATION_UPDATE_PLAN"; then
+  printf '%s\n' "Location update boundary plan must be marked completed." >&2
   exit 1
 fi
 

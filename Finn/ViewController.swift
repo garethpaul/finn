@@ -80,6 +80,11 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        if manager.location == nil {
+            return
+        }
+
+        manager.stopUpdatingLocation()
         var locValue : CLLocationCoordinate2D = manager.location.coordinate
         var lat = locValue.latitude.format(".2")
         var lon = locValue.longitude.format(".2")
@@ -117,7 +122,8 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
 
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
-            println("Error while updating location:" + error.localizedDescription)
+        manager.stopUpdatingLocation()
+        println("Location update failed")
     }
     
 
