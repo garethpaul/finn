@@ -11,6 +11,7 @@ ENDPOINT_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-endpoint-url-parts.md"
 RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-guard.md"
 PICKER_RESTAURANT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-picker-restaurant-state-guard.md"
 COORDINATE_PARAMS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-coordinate-parameter-guard.md"
+IMAGE_URL_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-url-parts-guard.md"
 
 require_file() {
   path=$1
@@ -41,6 +42,7 @@ for path in \
   "docs/plans/2026-06-09-api-endpoint-url-parts.md" \
   "docs/plans/2026-06-09-api-restaurant-field-guard.md" \
   "docs/plans/2026-06-09-picker-restaurant-state-guard.md" \
+  "docs/plans/2026-06-09-image-url-parts-guard.md" \
   "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
@@ -58,14 +60,16 @@ fi
 if ! grep -Fq "Finn.xcworkspace" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make check" "$ROOT_DIR/README.md" ||
   ! grep -Fq "FINN_API_BASE_URL" "$ROOT_DIR/README.md" ||
-  ! grep -Fq "location data" "$ROOT_DIR/README.md"; then
+  ! grep -Fq "location data" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "parsed URL parts" "$ROOT_DIR/README.md"; then
   printf '%s\n' "README must document workspace usage, verification, API config, and location privacy." >&2
   exit 1
 fi
 
 if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "FINN_API_BASE_URL" "$ROOT_DIR/VISION.md" ||
-  ! grep -Fq "location coordinates" "$ROOT_DIR/VISION.md"; then
+  ! grep -Fq "location coordinates" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "parsed image URL validation" "$ROOT_DIR/VISION.md"; then
   printf '%s\n' "VISION must describe the current API and location guardrails." >&2
   exit 1
 fi
@@ -155,7 +159,11 @@ if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" |
   ! grep -Fq "if let url = NSURL(string: url_string)" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   ! grep -Fq "if let restaurant = restaurant" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   ! grep -Fq "nameLabel.text = restaurant.name" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
-  ! grep -Fq '!url.absoluteString.hasPrefix("https://")' "$picture" ||
+  ! grep -Fq "if let scheme = url.scheme" "$picture" ||
+  ! grep -Fq 'scheme != "https"' "$picture" ||
+  ! grep -Fq "if let host = url.host" "$picture" ||
+  ! grep -Fq "host.isEmpty" "$picture" ||
+  ! grep -Fq "url.user != nil || url.password != nil" "$picture" ||
   ! grep -Fq "if let imageData = data" "$picture"; then
   printf '%s\n' "Image loading and picker rendering must guard invalid URLs, missing restaurants, and failed image decoding." >&2
   exit 1
@@ -220,6 +228,16 @@ fi
 
 if ! grep -Fq "make check" "$COORDINATE_PARAMS_PLAN"; then
   printf '%s\n' "API coordinate parameter guard plan must record make check verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$IMAGE_URL_PARTS_PLAN"; then
+  printf '%s\n' "Image URL parts guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "make check" "$IMAGE_URL_PARTS_PLAN"; then
+  printf '%s\n' "Image URL parts guard plan must record make check verification." >&2
   exit 1
 fi
 

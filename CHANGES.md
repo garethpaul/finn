@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Parsed restaurant image URLs before loading and rejected missing hosts or
+  embedded username/password.
 - Trimmed restaurant lookup coordinate parameters and skipped API requests when
   latitude or longitude is blank.
 - Guarded picker card rendering so restaurant names and images are read through

@@ -42,6 +42,8 @@ Current baseline:
 - Picker views avoid force-unwrapping restaurant state while rendering card
   names and images.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
+- Restaurant image downloads also require a parsed host and reject embedded
+  username/password before requests.
 
 Next priorities:
 
@@ -55,6 +57,8 @@ Next priorities:
 - Keep coordinate parameter trimming covered when changing restaurant API calls
 - Keep picker rendering tolerant of missing restaurant state during legacy UI
   modernization
+- Keep parsed image URL validation covered when changing restaurant card image
+  loading
 
 Contribution rules:
 

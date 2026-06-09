@@ -38,8 +38,9 @@ Finn's location flow should use a single foreground coordinate lookup for the
 restaurant request, stop updates after a usable fix or failure, and avoid raw
 location coordinates or Core Location error details in logs.
 
-Restaurant image URLs should use HTTPS, and swipe preference events should not
-be written to application logs.
+Restaurant image URLs should use HTTPS with a parsed host and no embedded
+username/password, and swipe preference events should not be written to
+application logs.
 
 Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.

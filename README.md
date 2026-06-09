@@ -76,6 +76,8 @@ blank values are rejected before requests. API restaurant fields are trimmed,
 and blank restaurant names or image URLs are skipped before card creation.
 Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
+Restaurant image downloads inspect parsed URL parts, require HTTPS with a host,
+and reject embedded username/password before creating image requests.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
@@ -97,6 +99,7 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Blank coordinate parameters should be rejected before restaurant API
   requests.
 - Restaurant image URLs should be loaded over HTTPS only.
+- Restaurant image URLs should include a host and no embedded username/password.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
 - Picker views should not force-unwrap restaurant state when rendering names or
@@ -116,6 +119,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   field normalization coverage.
 - See `docs/plans/2026-06-09-api-coordinate-parameter-guard.md` for restaurant
   lookup coordinate parameter coverage.
+- See `docs/plans/2026-06-09-image-url-parts-guard.md` for parsed restaurant
+  image URL validation.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

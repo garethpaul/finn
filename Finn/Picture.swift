@@ -5,7 +5,23 @@ class Picture{
 
     func get(url: NSURL, handler: ((image: UIImage, NSError!) -> Void))
     {
-        if !url.absoluteString.hasPrefix("https://") {
+        if let scheme = url.scheme {
+            if scheme != "https" {
+                return
+            }
+        } else {
+            return
+        }
+
+        if let host = url.host {
+            if host.isEmpty {
+                return
+            }
+        } else {
+            return
+        }
+
+        if url.user != nil || url.password != nil {
             return
         }
 
