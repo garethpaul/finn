@@ -71,9 +71,11 @@ card queue handling. It also verifies that location updates stop after a usable
 callback location or failure and that location failures do not log raw error
 details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
-fragments before sending coordinates. API restaurant fields are trimmed, and
-blank restaurant names or image URLs are skipped before card creation. Picker
-views avoid force-unwrapping restaurant state while rendering names and images.
+fragments before sending coordinates. Coordinate parameters are trimmed and
+blank values are rejected before requests. API restaurant fields are trimmed,
+and blank restaurant names or image URLs are skipped before card creation.
+Picker views avoid force-unwrapping restaurant state while rendering names and
+images.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
@@ -92,6 +94,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Review changes touching mobile permissions or privacy-sensitive device data; examples from the scan include Finn/Info.plist, Finn/ViewController.swift.
 - Review changes touching file, media, JSON, XML, CSV, OCR, or data parsing; examples from the scan include Finn/API.swift, Finn/FinnPickerView.swift, Finn/Info.plist, Finn/Picture.swift, and 4 more.
 - Avoid logging location data, restaurant preferences, or private API response payloads.
+- Blank coordinate parameters should be rejected before restaurant API
+  requests.
 - Restaurant image URLs should be loaded over HTTPS only.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
@@ -110,6 +114,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   with any changes to coordinate lookup behavior.
 - See `docs/plans/2026-06-09-api-restaurant-field-guard.md` for restaurant API
   field normalization coverage.
+- See `docs/plans/2026-06-09-api-coordinate-parameter-guard.md` for restaurant
+  lookup coordinate parameter coverage.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

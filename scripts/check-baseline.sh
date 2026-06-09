@@ -10,6 +10,7 @@ LOCATION_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-09-location-callback-payload
 ENDPOINT_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-endpoint-url-parts.md"
 RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-guard.md"
 PICKER_RESTAURANT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-picker-restaurant-state-guard.md"
+COORDINATE_PARAMS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-coordinate-parameter-guard.md"
 
 require_file() {
   path=$1
@@ -36,6 +37,7 @@ for path in \
   "Finn/Picture.swift" \
   "Finn/ViewController.swift" \
   "FinnTests/FinnTests.swift" \
+  "docs/plans/2026-06-09-api-coordinate-parameter-guard.md" \
   "docs/plans/2026-06-09-api-endpoint-url-parts.md" \
   "docs/plans/2026-06-09-api-restaurant-field-guard.md" \
   "docs/plans/2026-06-09-picker-restaurant-state-guard.md" \
@@ -120,6 +122,14 @@ if ! grep -Fq "let cleanName = name.stringByTrimmingCharactersInSet" "$api" ||
   exit 1
 fi
 
+if ! grep -Fq "let cleanLat = lat.stringByTrimmingCharactersInSet" "$api" ||
+  ! grep -Fq "let cleanLon = lon.stringByTrimmingCharactersInSet" "$api" ||
+  ! grep -Fq "cleanLat.isEmpty || cleanLon.isEmpty" "$api" ||
+  ! grep -Fq 'parameters: ["lat": cleanLat, "lon": cleanLon]' "$api"; then
+  printf '%s\n' "API client must trim and reject blank coordinate parameters before requests." >&2
+  exit 1
+fi
+
 view="$ROOT_DIR/Finn/ViewController.swift"
 if grep -Fq "println(lat)" "$view" ||
   grep -Fq "println(lon)" "$view" ||
@@ -200,6 +210,16 @@ fi
 
 if ! grep -Fq "status: completed" "$PICKER_RESTAURANT_PLAN"; then
   printf '%s\n' "Picker restaurant state guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$COORDINATE_PARAMS_PLAN"; then
+  printf '%s\n' "API coordinate parameter guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "make check" "$COORDINATE_PARAMS_PLAN"; then
+  printf '%s\n' "API coordinate parameter guard plan must record make check verification." >&2
   exit 1
 fi
 

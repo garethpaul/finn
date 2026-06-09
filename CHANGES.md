@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Trimmed restaurant lookup coordinate parameters and skipped API requests when
+  latitude or longitude is blank.
 - Guarded picker card rendering so restaurant names and images are read through
   optional bindings instead of force-unwrapped state.
 - Used the latest delegate-provided location payload for restaurant lookups

@@ -44,9 +44,16 @@ class APIClient {
     
     func getRestaurant(lat: String, lon: String, completion: (result: Array<Restaurant>) -> Void){
         var new_result = Array<Restaurant>()
+        let cleanLat = lat.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        let cleanLon = lon.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+
+        if cleanLat.isEmpty || cleanLon.isEmpty {
+            completion(result: new_result)
+            return
+        }
 
         if let requestURL = configuredAPIURL() {
-            Alamofire.request(.GET, requestURL, parameters: ["lat": lat, "lon": lon]).responseJSON() {
+            Alamofire.request(.GET, requestURL, parameters: ["lat": cleanLat, "lon": cleanLon]).responseJSON() {
                 (_, _, JSON, _) in
 
                 if let json = JSON as? Dictionary<String, AnyObject> {

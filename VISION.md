@@ -29,6 +29,8 @@ Current baseline:
   endpoints stay in local HTTPS build settings.
 - API endpoint validation parses the configured URL and rejects unresolved
   placeholders, missing hosts, embedded userinfo, query strings, and fragments.
+- Restaurant lookup coordinate parameters are trimmed and blank values are
+  rejected before requests.
 - Rounded location coordinates are not logged from the view controller.
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.
@@ -50,6 +52,7 @@ Next priorities:
 - Preserve the one-shot foreground location lookup boundary when modernizing
   Core Location handling
 - Keep callback-location handling covered when changing the location delegate
+- Keep coordinate parameter trimming covered when changing restaurant API calls
 - Keep picker rendering tolerant of missing restaurant state during legacy UI
   modernization
 
