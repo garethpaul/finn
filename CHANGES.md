@@ -1,5 +1,13 @@
 # Changes
 
+## 2026-06-10
+
+- Added a bounded, least-privilege macOS GitHub Actions workflow for the Finn
+  maintenance baseline.
+- Switched hosted Xcode validation to the checked-in project so absent generated
+  CocoaPods files do not cause false failures.
+- Extended the checker and docs to enforce the hosted validation contract.
+
 ## 2026-06-09
 
 - Parsed restaurant image URLs before loading and rejected missing hosts or

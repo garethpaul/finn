@@ -12,6 +12,8 @@ RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-gua
 PICKER_RESTAURANT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-picker-restaurant-state-guard.md"
 COORDINATE_PARAMS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-coordinate-parameter-guard.md"
 IMAGE_URL_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-url-parts-guard.md"
+CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
+CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
   path=$1
@@ -22,6 +24,7 @@ require_file() {
 }
 
 for path in \
+  ".github/workflows/check.yml" \
   ".gitignore" \
   "CHANGES.md" \
   "Makefile" \
@@ -47,7 +50,8 @@ for path in \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
   "docs/plans/2026-06-09-image-transport-preference-logs.md" \
-  "docs/plans/2026-06-08-finn-maintenance-baseline.md"; do
+  "docs/plans/2026-06-08-finn-maintenance-baseline.md" \
+  "docs/plans/2026-06-10-hosted-project-validation.md"; do
   require_file "$path"
 done
 
@@ -61,6 +65,7 @@ if ! grep -Fq "Finn.xcworkspace" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make check" "$ROOT_DIR/README.md" ||
   ! grep -Fq "FINN_API_BASE_URL" "$ROOT_DIR/README.md" ||
   ! grep -Fq "location data" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "GitHub Actions" "$ROOT_DIR/README.md" ||
   ! grep -Fq "parsed URL parts" "$ROOT_DIR/README.md"; then
   printf '%s\n' "README must document workspace usage, verification, API config, and location privacy." >&2
   exit 1
@@ -69,6 +74,7 @@ fi
 if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "FINN_API_BASE_URL" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "location coordinates" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "GitHub Actions" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "parsed image URL validation" "$ROOT_DIR/VISION.md"; then
   printf '%s\n' "VISION must describe the current API and location guardrails." >&2
   exit 1
@@ -176,9 +182,27 @@ if ! grep -Fq "*.xcconfig" "$ROOT_DIR/.gitignore" ||
 fi
 
 if command -v xcodebuild >/dev/null 2>&1; then
-  xcodebuild -list -workspace "$ROOT_DIR/Finn.xcworkspace"
+  xcodebuild -list -project "$ROOT_DIR/Finn.xcodeproj" >/dev/null
 else
-  printf '%s\n' "Skipping xcodebuild workspace listing: xcodebuild is not installed."
+  printf '%s\n' "Skipping xcodebuild project listing: xcodebuild is not installed."
+fi
+
+if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
+  ! grep -Fq "contents: read" "$CI_WORKFLOW" ||
+  ! grep -Fq "cancel-in-progress: true" "$CI_WORKFLOW" ||
+  ! grep -Fq "runs-on: macos-15" "$CI_WORKFLOW" ||
+  ! grep -Fq "timeout-minutes: 10" "$CI_WORKFLOW" ||
+  ! grep -Fq "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" "$CI_WORKFLOW" ||
+  ! grep -Fq "run: make check" "$CI_WORKFLOW"; then
+  printf '%s\n' "GitHub Actions must keep the bounded, least-privilege macOS check contract." >&2
+  exit 1
+fi
+
+if ! grep -Fq "GitHub Actions" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "GitHub Actions" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "docs/plans/2026-06-10-hosted-project-validation.md" "$ROOT_DIR/README.md"; then
+  printf '%s\n' "Project docs must record the hosted project validation baseline." >&2
+  exit 1
 fi
 
 if ! grep -Fq "status: completed" "$PLAN"; then
@@ -238,6 +262,12 @@ fi
 
 if ! grep -Fq "make check" "$IMAGE_URL_PARTS_PLAN"; then
   printf '%s\n' "Image URL parts guard plan must record make check verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CI_PLAN" ||
+  ! grep -Fq "make check" "$CI_PLAN"; then
+  printf '%s\n' "Hosted project validation plan must be completed and record verification." >&2
   exit 1
 fi
 

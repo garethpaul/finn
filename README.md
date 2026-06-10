@@ -82,6 +82,9 @@ The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
 appropriate scheme and destination.
+GitHub Actions runs `make check` on macOS for pushes and pull requests. Hosted
+validation parses the checked-in `Finn.xcodeproj`; developers should continue
+to open `Finn.xcworkspace` after `pod install` for dependency-backed builds.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -113,6 +116,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 - This looks like an Apple platform project or sample. Xcode, Swift, CocoaPods, and deployment target versions may need to match the original project era.
 - Run `make check` before pushing changes that touch CocoaPods, API configuration, location handling, or card queue behavior.
+- Keep `.github/workflows/check.yml` aligned with the local maintenance
+  baseline.
+- See `docs/plans/2026-06-10-hosted-project-validation.md` for the hosted Xcode
+  project validation boundary.
 - Keep the location update and callback payload plans in `docs/plans/` aligned
   with any changes to coordinate lookup behavior.
 - See `docs/plans/2026-06-09-api-restaurant-field-guard.md` for restaurant API
