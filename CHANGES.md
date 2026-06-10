@@ -2,6 +2,8 @@
 
 ## 2026-06-10
 
+- Rejected nonnumeric and out-of-range latitude/longitude parameters before
+  restaurant API requests.
 - Added a bounded, least-privilege macOS GitHub Actions workflow for the Finn
   maintenance baseline.
 - Switched hosted Xcode validation to the checked-in project so absent generated

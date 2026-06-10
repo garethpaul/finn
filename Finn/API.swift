@@ -41,13 +41,25 @@ class APIClient {
 
         return nil
     }
+
+    func coordinateInRange(value: String, minimum: Double, maximum: Double) -> Bool {
+        let scanner = NSScanner(string: value)
+        var parsedValue: Double = 0
+
+        if !scanner.scanDouble(&parsedValue) || !scanner.atEnd {
+            return false
+        }
+
+        return parsedValue >= minimum && parsedValue <= maximum
+    }
     
     func getRestaurant(lat: String, lon: String, completion: (result: Array<Restaurant>) -> Void){
         var new_result = Array<Restaurant>()
         let cleanLat = lat.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
         let cleanLon = lon.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 
-        if cleanLat.isEmpty || cleanLon.isEmpty {
+        if !coordinateInRange(cleanLat, minimum: -90, maximum: 90) ||
+            !coordinateInRange(cleanLon, minimum: -180, maximum: 180) {
             completion(result: new_result)
             return
         }

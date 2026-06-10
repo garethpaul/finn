@@ -47,8 +47,8 @@ application logs.
 Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.
 
-Restaurant lookup coordinate parameters should be trimmed and rejected when
-blank before any API request is sent.
+Restaurant lookup coordinate parameters should be parsed completely and kept
+within latitude and longitude ranges before any API request is sent.
 
 ## Dependency and Supply Chain Security
 

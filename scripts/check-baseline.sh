@@ -12,6 +12,7 @@ RESTAURANT_FIELDS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-restaurant-field-gua
 PICKER_RESTAURANT_PLAN="$ROOT_DIR/docs/plans/2026-06-09-picker-restaurant-state-guard.md"
 COORDINATE_PARAMS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-coordinate-parameter-guard.md"
 IMAGE_URL_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-url-parts-guard.md"
+COORDINATE_RANGE_PLAN="$ROOT_DIR/docs/plans/2026-06-10-api-coordinate-range-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
@@ -46,6 +47,7 @@ for path in \
   "docs/plans/2026-06-09-api-restaurant-field-guard.md" \
   "docs/plans/2026-06-09-picker-restaurant-state-guard.md" \
   "docs/plans/2026-06-09-image-url-parts-guard.md" \
+  "docs/plans/2026-06-10-api-coordinate-range-guard.md" \
   "docs/plans/2026-06-09-location-callback-payload.md" \
   "docs/plans/2026-06-08-finn-image-loading-guards.md" \
   "docs/plans/2026-06-09-location-update-boundary.md" \
@@ -134,9 +136,12 @@ fi
 
 if ! grep -Fq "let cleanLat = lat.stringByTrimmingCharactersInSet" "$api" ||
   ! grep -Fq "let cleanLon = lon.stringByTrimmingCharactersInSet" "$api" ||
-  ! grep -Fq "cleanLat.isEmpty || cleanLon.isEmpty" "$api" ||
+  ! grep -Fq "func coordinateInRange" "$api" ||
+  ! grep -Fq "!scanner.scanDouble(&parsedValue) || !scanner.atEnd" "$api" ||
+  ! grep -Fq "coordinateInRange(cleanLat, minimum: -90, maximum: 90)" "$api" ||
+  ! grep -Fq "coordinateInRange(cleanLon, minimum: -180, maximum: 180)" "$api" ||
   ! grep -Fq 'parameters: ["lat": cleanLat, "lon": cleanLon]' "$api"; then
-  printf '%s\n' "API client must trim and reject blank coordinate parameters before requests." >&2
+  printf '%s\n' "API client must parse and range-check coordinate parameters before requests." >&2
   exit 1
 fi
 
@@ -257,6 +262,11 @@ fi
 
 if ! grep -Fq "status: completed" "$IMAGE_URL_PARTS_PLAN"; then
   printf '%s\n' "Image URL parts guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$COORDINATE_RANGE_PLAN"; then
+  printf '%s\n' "API coordinate range guard plan must be marked completed." >&2
   exit 1
 fi
 

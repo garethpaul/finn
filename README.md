@@ -71,8 +71,9 @@ card queue handling. It also verifies that location updates stop after a usable
 callback location or failure and that location failures do not log raw error
 details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
-fragments before sending coordinates. Coordinate parameters are trimmed and
-blank values are rejected before requests. API restaurant fields are trimmed,
+fragments before sending coordinates. Coordinate parameters are trimmed,
+parsed completely, and checked against latitude/longitude ranges before
+requests. API restaurant fields are trimmed,
 and blank restaurant names or image URLs are skipped before card creation.
 Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
