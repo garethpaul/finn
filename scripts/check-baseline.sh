@@ -351,10 +351,31 @@ if ! grep -Fq "status: completed" "$CI_PLAN" ||
   exit 1
 fi
 
-if ! grep -Fq "status: completed" "$BRIDGING_HEADER_PLAN" ||
-  ! grep -Fq "make check" "$BRIDGING_HEADER_PLAN"; then
-  printf '%s\n' "Portable bridging header plan must be completed and record verification." >&2
-  exit 1
-fi
+python3 - "$BRIDGING_HEADER_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "all four Make gates",
+    "push run `27392252049`",
+    "pull-request run `27392255196`",
+    "push run `27392268849`",
+    "CodeQL run `27402319989`",
+)
+
+if (
+    statuses != ["status: completed"]
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit(
+        "Portable bridging header plan must remain completed with actual verification recorded."
+    )
+PY
 
 printf '%s\n' "finn maintenance baseline checks passed."
