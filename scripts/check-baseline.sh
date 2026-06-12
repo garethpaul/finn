@@ -198,13 +198,16 @@ if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
   ! grep -Fq "runs-on: macos-15" "$CI_WORKFLOW" ||
   ! grep -Fq "timeout-minutes: 10" "$CI_WORKFLOW" ||
   ! grep -Fq "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" "$CI_WORKFLOW" ||
+  ! grep -Fq "persist-credentials: false" "$CI_WORKFLOW" ||
   ! grep -Fq "run: make check" "$CI_WORKFLOW"; then
   printf '%s\n' "GitHub Actions must keep the bounded, least-privilege macOS check contract." >&2
   exit 1
 fi
 
 if ! grep -Fq "GitHub Actions" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "no persisted checkout credentials" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "GitHub Actions" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "without persisted checkout credentials" "$ROOT_DIR/README.md" ||
   ! grep -Fq "docs/plans/2026-06-10-hosted-project-validation.md" "$ROOT_DIR/README.md"; then
   printf '%s\n' "Project docs must record the hosted project validation baseline." >&2
   exit 1

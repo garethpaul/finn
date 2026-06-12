@@ -6,6 +6,8 @@
   restaurant API requests.
 - Added a bounded, least-privilege macOS GitHub Actions workflow for the Finn
   maintenance baseline.
+- Disabled checkout credential persistence so later workflow steps cannot reuse
+  the GitHub token.
 - Switched hosted Xcode validation to the checked-in project so absent generated
   CocoaPods files do not cause false failures.
 - Extended the checker and docs to enforce the hosted validation contract.

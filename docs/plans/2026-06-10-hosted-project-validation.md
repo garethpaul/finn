@@ -12,8 +12,8 @@ than fail on the intentionally absent `Pods/Pods.xcodeproj`.
 ## Changes
 
 - Added a least-privilege macOS GitHub Actions workflow that runs `make check`.
-- Pinned checkout by commit, bounded the job with a timeout, and cancel
-  superseded runs.
+- Pinned checkout by commit, disabled checkout credential persistence, bounded
+  the job with a timeout, and cancel superseded runs.
 - Changed the installed-Xcode check to list the checked-in Finn project; local
   functional development still uses the workspace after `pod install`.
 - Extended the baseline and project documentation to enforce this CI contract.
