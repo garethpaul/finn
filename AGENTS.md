@@ -2,7 +2,7 @@
 
 ## Repository purpose
 
-`garethpaul/finn` is an Apple platform application or Objective-C/Swift sample. App for finding Restaurants/Food etc
+`garethpaul/finn` is a legacy Swift iOS restaurant discovery sample that uses Core Location, a locally configured HTTPS API, Alamofire, CocoaPods, and swipeable restaurant cards.
 
 ## Project structure
 
@@ -33,7 +33,7 @@
 
 ## Testing guidance
 
-- Test-related files detected: `FinnTests/FinnTests.swift`
+- `FinnTests/FinnTests.swift` contains only template assertions; do not treat it as meaningful API, location, image-loading, or card-state coverage. The maintained regression gate is `make check`.
 - Start with the narrowest relevant test or Make target, then run `make check` before handing off if the change is not documentation-only.
 - Keep README verification notes in sync when commands, fixtures, or supported toolchains change.
 
@@ -49,9 +49,12 @@
 - `FINN_API_BASE_URL` is the local build setting used to configure the restaurant API endpoint.
 - Keep private endpoints, API credentials, signing files, and local `.xcconfig` files out of source control.
 - Avoid logging location data, restaurant preferences, or private API response payloads.
-- Blank coordinate parameters should be rejected before restaurant API requests.
-- Restaurant image URLs should be loaded over HTTPS only.
-- Blank restaurant names or image URLs from the API should be rejected before cards are created.
+- Use the delegate-provided callback location, stop updates after the first usable fix or failure, and keep failure logs free of raw Core Location details.
+- Coordinate parameters must be non-blank, parse completely as finite numbers, and remain within latitude and longitude ranges before restaurant API requests.
+- `FINN_API_BASE_URL` must resolve to HTTPS with a host and no userinfo, query, fragment, or unresolved build-setting placeholder.
+- Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.
+- Trim and reject blank restaurant names or image URLs before cards are created, and keep picker rendering tolerant of missing restaurant state.
+- Hosted macOS CI proves the checked-in Xcode project parses and static contracts pass; it does not prove CocoaPods installation, signing, location authorization, live API behavior, or image rendering.
 
 ## Agent workflow
 
