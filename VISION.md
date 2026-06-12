@@ -26,7 +26,8 @@ Current baseline:
 - `scripts/check-baseline.sh` and `make check` verify the CocoaPods lockfile,
   workspace guidance, API configuration, and location guardrails.
 - GitHub Actions runs that baseline on macOS and parses the checked-in Xcode
-  project without requiring generated CocoaPods files or private API settings.
+  project without requiring generated CocoaPods files, private API settings, or
+  persisted checkout credentials.
 - `FINN_API_BASE_URL` feeds the `FinnAPIBaseURL` Info.plist key so private API
   endpoints stay in local HTTPS build settings.
 - API endpoint validation parses the configured URL and rejects unresolved

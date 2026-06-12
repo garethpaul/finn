@@ -84,8 +84,9 @@ baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
 appropriate scheme and destination.
 GitHub Actions runs `make check` on macOS for pushes and pull requests. Hosted
-validation parses the checked-in `Finn.xcodeproj`; developers should continue
-to open `Finn.xcworkspace` after `pod install` for dependency-backed builds.
+validation uses read-only permissions without persisted checkout credentials
+and parses the checked-in `Finn.xcodeproj`; developers should continue to open
+`Finn.xcworkspace` after `pod install` for dependency-backed builds.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
