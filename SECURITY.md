@@ -32,6 +32,8 @@ Helpful reports include:
 - GitHub Actions runs the static security guardrails and Xcode project parse
   with read-only repository permissions and no persisted checkout credentials
   before changes land.
+- Xcode build settings should reference tracked files relative to the repository
+  and must not disclose or depend on developer home-directory paths.
 
 ## Mobile Privacy Notes
 
