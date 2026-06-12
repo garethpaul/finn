@@ -28,6 +28,8 @@ Current baseline:
 - GitHub Actions runs that baseline on macOS and parses the checked-in Xcode
   project without requiring generated CocoaPods files, private API settings, or
   persisted checkout credentials.
+- Debug and Release use the tracked `Finn/BridgeHeader.h` through the same
+  repository-relative build setting.
 - `FINN_API_BASE_URL` feeds the `FinnAPIBaseURL` Info.plist key so private API
   endpoints stay in local HTTPS build settings.
 - API endpoint validation parses the configured URL and rejects unresolved
@@ -63,6 +65,7 @@ Next priorities:
 - Keep parsed image URL validation covered when changing restaurant card image
   loading
 - Keep hosted project validation aligned with `make check`.
+- Keep Xcode project file references portable across checkout locations.
 
 Contribution rules:
 

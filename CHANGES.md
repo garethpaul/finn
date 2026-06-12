@@ -1,5 +1,13 @@
 # Changes
 
+## 2026-06-12
+
+- Replaced the Finn target's machine-specific bridging-header paths with the
+  tracked repository-relative `Finn/BridgeHeader.h` setting for Debug and
+  Release builds.
+- Extended the maintenance baseline and docs to reject developer home paths in
+  the checked-in Xcode project.
+
 ## 2026-06-10
 
 - Rejected nonnumeric and out-of-range latitude/longitude parameters before

@@ -87,6 +87,9 @@ GitHub Actions runs `make check` on macOS for pushes and pull requests. Hosted
 validation uses read-only permissions without persisted checkout credentials
 and parses the checked-in `Finn.xcodeproj`; developers should continue to open
 `Finn.xcworkspace` after `pod install` for dependency-backed builds.
+The Finn target uses the tracked `Finn/BridgeHeader.h` through a
+repository-relative Xcode setting in both Debug and Release configurations, so
+the project does not depend on another developer's home-directory path.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -94,6 +97,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 - `FINN_API_BASE_URL` is the local build setting used to configure the restaurant API endpoint.
 - Keep private endpoints, API credentials, signing files, and local `.xcconfig` files out of source control.
+- Keep Xcode file references repository-relative; do not commit paths under a
+  developer home directory.
 
 ## Security and Privacy Notes
 

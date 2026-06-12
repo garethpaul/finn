@@ -14,6 +14,7 @@ COORDINATE_PARAMS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-api-coordinate-parameter
 IMAGE_URL_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-url-parts-guard.md"
 COORDINATE_RANGE_PLAN="$ROOT_DIR/docs/plans/2026-06-10-api-coordinate-range-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
+BRIDGING_HEADER_PLAN="$ROOT_DIR/docs/plans/2026-06-12-portable-bridging-header-path.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -36,6 +37,7 @@ for path in \
   "VISION.md" \
   "Finn.xcworkspace/contents.xcworkspacedata" \
   "Finn.xcodeproj/project.pbxproj" \
+  "Finn/BridgeHeader.h" \
   "Finn/API.swift" \
   "Finn/Info.plist" \
   "Finn/FinnPickerView.swift" \
@@ -53,13 +55,23 @@ for path in \
   "docs/plans/2026-06-09-location-update-boundary.md" \
   "docs/plans/2026-06-09-image-transport-preference-logs.md" \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md" \
-  "docs/plans/2026-06-10-hosted-project-validation.md"; do
+  "docs/plans/2026-06-10-hosted-project-validation.md" \
+  "docs/plans/2026-06-12-portable-bridging-header-path.md"; do
   require_file "$path"
 done
 
 if ! grep -Fq "Alamofire (1.2.2)" "$ROOT_DIR/Podfile.lock" ||
   ! grep -Fq "MDCSwipeToChoose (0.2.2)" "$ROOT_DIR/Podfile.lock"; then
   printf '%s\n' "CocoaPods lockfile must preserve the legacy dependency baseline." >&2
+  exit 1
+fi
+
+project_file="$ROOT_DIR/Finn.xcodeproj/project.pbxproj"
+bridging_header_setting="SWIFT_OBJC_BRIDGING_HEADER = Finn/BridgeHeader.h;"
+
+if [ "$(grep -Fc "$bridging_header_setting" "$project_file")" -ne 2 ] ||
+  grep -Fq "/Users/" "$project_file"; then
+  printf '%s\n' "Finn Debug and Release builds must use the tracked repository-relative bridging header." >&2
   exit 1
 fi
 
@@ -336,6 +348,12 @@ fi
 if ! grep -Fq "status: completed" "$CI_PLAN" ||
   ! grep -Fq "make check" "$CI_PLAN"; then
   printf '%s\n' "Hosted project validation plan must be completed and record verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$BRIDGING_HEADER_PLAN" ||
+  ! grep -Fq "make check" "$BRIDGING_HEADER_PLAN"; then
+  printf '%s\n' "Portable bridging header plan must be completed and record verification." >&2
   exit 1
 fi
 

@@ -1,7 +1,7 @@
 ---
 title: Portable Bridging Header Path
 date: 2026-06-12
-status: planned
+status: completed
 execution: xcode-project
 ---
 
