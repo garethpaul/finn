@@ -57,6 +57,12 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
         }
 
         receivedData.length = 0
+        if !isImageResponse(response) {
+            connection.cancel()
+            resetState()
+            return
+        }
+
         if response.expectedContentLength > Int64(maxImageDataBytes) {
             connection.cancel()
             resetState()
@@ -101,6 +107,14 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
     private func isActiveConnection(connection: NSURLConnection) -> Bool {
         if let currentConnection = activeConnection {
             return connection === currentConnection
+        }
+
+        return false
+    }
+
+    private func isImageResponse(response: NSURLResponse?) -> Bool {
+        if let mimeType = response?.MIMEType {
+            return mimeType.lowercaseString.hasPrefix("image/")
         }
 
         return false

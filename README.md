@@ -83,6 +83,8 @@ Image downloads use incremental `NSURLConnection` delegate callbacks, reject a
 declared or cumulative response over 5 MiB before UIKit decoding, and use a
 15-second request timeout. Picker cards retain the active loader, cancel it when
 released, and avoid a strong image-callback cycle.
+Missing or non-image response MIME types are cancelled before declared-length
+acceptance or body buffering.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the

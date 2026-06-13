@@ -17,6 +17,7 @@ CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
 BRIDGING_HEADER_PLAN="$ROOT_DIR/docs/plans/2026-06-12-portable-bridging-header-path.md"
 IMAGE_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-decode-payload-limit.md"
 STREAMING_IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-streaming-image-response-limit.md"
+IMAGE_MEDIA_TYPE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-response-media-type.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -60,7 +61,8 @@ for path in \
   "docs/plans/2026-06-10-hosted-project-validation.md" \
   "docs/plans/2026-06-12-portable-bridging-header-path.md" \
   "docs/plans/2026-06-13-image-decode-payload-limit.md" \
-  "docs/plans/2026-06-13-streaming-image-response-limit.md"; do
+  "docs/plans/2026-06-13-streaming-image-response-limit.md" \
+  "docs/plans/2026-06-13-image-response-media-type.md"; do
   require_file "$path"
 done
 
@@ -204,6 +206,8 @@ if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" 
   ! grep -Fq "receivedData.length > maxImageDataBytes - data.length" "$picture" ||
   ! grep -Fq "receivedData.appendData(data)" "$picture" ||
   ! grep -Fq "connectionDidFinishLoading" "$picture" ||
+  ! grep -Fq "private func isImageResponse(response: NSURLResponse?) -> Bool" "$picture" ||
+  ! grep -Fq 'mimeType.lowercaseString.hasPrefix("image/")' "$picture" ||
   ! grep -Fq "private let picture = Picture()" "$picker" ||
   ! grep -Fq "[weak self]" "$picker" ||
   ! grep -Fq "picture.cancel()" "$picker" ||
@@ -244,6 +248,10 @@ failure = section(
     "func connection(connection: NSURLConnection!, didFailWithError error: NSError!)",
     "private func isActiveConnection(connection: NSURLConnection)",
 )
+media_helper = section(
+    "private func isImageResponse(response: NSURLResponse?) -> Bool",
+    "private func resetState()",
+)
 reset = section("private func resetState()", "deinit")
 
 def ordered(text, fragments, message):
@@ -251,16 +259,44 @@ def ordered(text, fragments, message):
     if -1 in positions or positions != sorted(positions) or len(set(positions)) != len(positions):
         raise SystemExit(message)
 
+if source.count("private func isImageResponse(response: NSURLResponse?) -> Bool") != 1:
+    raise SystemExit("Picture must retain one image response media-type helper.")
 ordered(
-    response,
+    media_helper,
     (
-        "receivedData.length = 0",
-        "response.expectedContentLength > Int64(maxImageDataBytes)",
-        "connection.cancel()",
-        "resetState()",
+        "response?.MIMEType",
+        'mimeType.lowercaseString.hasPrefix("image/")',
+        "return false",
     ),
-    "Declared image length must be rejected before response data is buffered.",
+    "Missing and non-image MIME types must fail closed.",
 )
+
+response_reset = response.find("receivedData.length = 0")
+media_check = response.find("if !isImageResponse(response)", response_reset)
+media_cancel = response.find("connection.cancel()", media_check)
+media_reset = response.find("resetState()", media_cancel)
+media_return = response.find("return", media_reset)
+declared_length = response.find(
+    "response.expectedContentLength > Int64(maxImageDataBytes)", media_return
+)
+length_cancel = response.find("connection.cancel()", declared_length)
+length_reset = response.find("resetState()", length_cancel)
+if -1 in (
+    response_reset,
+    media_check,
+    media_cancel,
+    media_reset,
+    media_return,
+    declared_length,
+    length_cancel,
+    length_reset,
+) or not (
+    response_reset < media_check < media_cancel < media_reset < media_return <
+    declared_length < length_cancel < length_reset
+):
+    raise SystemExit(
+        "Image media type and declared length must fail closed before buffering."
+    )
 ordered(
     data,
     (
@@ -531,5 +567,21 @@ if statuses != ["status: completed"] or any(item not in plan for item in require
         "Streaming image response plan must record completed status and actual verification."
     )
 PY
+
+if ! grep -Fq "status: completed" "$IMAGE_MEDIA_TYPE_PLAN" ||
+  ! grep -Fq "hostile mutations were rejected" "$IMAGE_MEDIA_TYPE_PLAN" ||
+  ! grep -Fq "xcodebuild was unavailable" "$IMAGE_MEDIA_TYPE_PLAN" ||
+  ! grep -Fq "No restaurant API" "$IMAGE_MEDIA_TYPE_PLAN"; then
+  printf '%s\n' "Image response media-type plan must record completed local verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "Missing or non-image response MIME types are cancelled" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Missing or non-image MIME types should be rejected" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq 'require an `image/` MIME type' "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Rejected missing and non-image restaurant response MIME types" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Project docs must preserve the restaurant image media-type boundary." >&2
+  exit 1
+fi
 
 printf '%s\n' "finn maintenance baseline checks passed."

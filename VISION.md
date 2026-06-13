@@ -52,6 +52,8 @@ Current baseline:
 - Restaurant image loading rejects declared or cumulative payloads over 5 MiB
   during delegate delivery, before UIKit processing, with a finite timeout and
   explicit request-state cleanup.
+- Restaurant image responses require an `image/` MIME type before declared
+  length acceptance or body buffering.
 
 Next priorities:
 

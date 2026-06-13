@@ -50,6 +50,8 @@ application logs.
 Restaurant image responses over 5 MiB should be rejected while delegate chunks
 arrive and before UIKit decoding. Declared response lengths and cumulative
 bytes must both be checked because servers may omit or misstate content length.
+Missing or non-image MIME types should be rejected before declared-length
+acceptance or response buffering.
 The active picker should retain and cancel its finite-timeout loader without
 logging transport details or keeping a strong callback cycle.
 

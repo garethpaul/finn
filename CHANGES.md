@@ -2,6 +2,8 @@
 
 ## 2026-06-13
 
+- Rejected missing and non-image restaurant response MIME types before declared
+  length acceptance or body buffering.
 - Replaced whole-response image buffering with incremental delegate delivery,
   declared and cumulative 5 MiB limits, finite timeout, and terminal cleanup.
 - Retained and cancelled each picker card's active loader while avoiding a
