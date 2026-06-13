@@ -49,6 +49,8 @@ Current baseline:
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
 - Restaurant image downloads also require a parsed host and reject embedded
   username/password before requests.
+- Restaurant image decoding rejects empty data and payloads over 5 MiB, while
+  documentation preserves the legacy whole-response buffering limitation.
 
 Next priorities:
 
@@ -64,6 +66,8 @@ Next priorities:
   modernization
 - Keep parsed image URL validation covered when changing restaurant card image
   loading
+- Keep the 5 MiB pre-decode image boundary and its whole-response buffering
+  limitation explicit when modernizing image transport
 - Keep hosted project validation aligned with `make check`.
 - Keep Xcode project file references portable across checkout locations.
 

@@ -79,6 +79,9 @@ Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
 Restaurant image downloads inspect parsed URL parts, require HTTPS with a host,
 and reject embedded username/password before creating image requests.
+Image responses larger than 5 MiB are rejected before UIKit decoding. The
+legacy `NSURLConnection` convenience API still buffers the full response before
+that decode guard runs, so this is not a streaming download limit.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the

@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-13
+
+- Rejected empty and over-5-MiB restaurant image data before UIKit decoding.
+- Added static ordering, limit, documentation, and completed-evidence contracts
+  while preserving the legacy whole-response buffering limitation.
+
 ## 2026-06-12
 
 - Replaced the Finn target's machine-specific bridging-header paths with the

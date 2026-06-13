@@ -3,6 +3,8 @@ import UIKit
 
 class Picture{
 
+    private let maxImageDataBytes = 5 * 1024 * 1024
+
     func get(url: NSURL, handler: ((image: UIImage, NSError!) -> Void))
     {
         if let scheme = url.scheme {
@@ -34,6 +36,10 @@ class Picture{
                 }
 
                 if let imageData = data {
+                    if imageData.length == 0 || imageData.length > self.maxImageDataBytes {
+                        return
+                    }
+
                     if let image = UIImage(data: imageData) {
                         handler(image: image, error)
                     }

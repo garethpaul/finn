@@ -47,6 +47,10 @@ Restaurant image URLs should use HTTPS with a parsed host and no embedded
 username/password, and swipe preference events should not be written to
 application logs.
 
+Restaurant image data over 5 MiB should be rejected before UIKit decoding. The
+legacy convenience API still buffers the whole response before this guard, so
+transport-level response limiting remains future modernization work.
+
 Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.
 

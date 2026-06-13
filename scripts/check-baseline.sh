@@ -15,6 +15,7 @@ IMAGE_URL_PARTS_PLAN="$ROOT_DIR/docs/plans/2026-06-09-image-url-parts-guard.md"
 COORDINATE_RANGE_PLAN="$ROOT_DIR/docs/plans/2026-06-10-api-coordinate-range-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
 BRIDGING_HEADER_PLAN="$ROOT_DIR/docs/plans/2026-06-12-portable-bridging-header-path.md"
+IMAGE_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-decode-payload-limit.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -56,7 +57,8 @@ for path in \
   "docs/plans/2026-06-09-image-transport-preference-logs.md" \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md" \
   "docs/plans/2026-06-10-hosted-project-validation.md" \
-  "docs/plans/2026-06-12-portable-bridging-header-path.md"; do
+  "docs/plans/2026-06-12-portable-bridging-header-path.md" \
+  "docs/plans/2026-06-13-image-decode-payload-limit.md"; do
   require_file "$path"
 done
 
@@ -192,6 +194,34 @@ if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" |
   exit 1
 fi
 
+if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" -ne 1 ] ||
+  ! grep -Fq "imageData.length == 0 || imageData.length > self.maxImageDataBytes" "$picture" ||
+  grep -Eq 'println\(|NSLog\(' "$picture"; then
+  printf '%s\n' "Image decoding must enforce the reviewed 5 MiB data boundary without logging remote content." >&2
+  exit 1
+fi
+
+python3 - "$picture" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1]).read_text()
+limits = re.findall(r"private let maxImageDataBytes = ([^\n]+)", source)
+if limits != ["5 * 1024 * 1024"]:
+    raise SystemExit("Picture must define one exact 5 MiB image-data limit.")
+
+contract = (
+    "if let imageData = data",
+    "imageData.length == 0 || imageData.length > self.maxImageDataBytes",
+    "UIImage(data: imageData)",
+    "handler(image: image, error)",
+)
+positions = [source.find(fragment) for fragment in contract]
+if -1 in positions or positions != sorted(positions) or len(set(positions)) != len(positions):
+    raise SystemExit("Image byte validation must remain ahead of UIKit decoding and callbacks.")
+PY
+
 if ! grep -Fq "*.xcconfig" "$ROOT_DIR/.gitignore" ||
   ! grep -Fq ".env" "$ROOT_DIR/.gitignore"; then
   printf '%s\n' "Local API and signing config files must stay ignored." >&2
@@ -277,6 +307,16 @@ if ! grep -Fq "GitHub Actions" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "without persisted checkout credentials" "$ROOT_DIR/README.md" ||
   ! grep -Fq "docs/plans/2026-06-10-hosted-project-validation.md" "$ROOT_DIR/README.md"; then
   printf '%s\n' "Project docs must record the hosted project validation baseline." >&2
+  exit 1
+fi
+
+if ! grep -Fq "larger than 5 MiB are rejected before UIKit decoding" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "still buffers the full response" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "image data over 5 MiB should be rejected before UIKit decoding" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "still buffers the whole response" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "image decoding rejects empty data and payloads over 5 MiB" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Rejected empty and over-5-MiB restaurant image data" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Project docs must record the image decode boundary and legacy buffering limitation." >&2
   exit 1
 fi
 
@@ -375,6 +415,27 @@ if (
 ):
     raise SystemExit(
         "Portable bridging header plan must remain completed with actual verification recorded."
+    )
+PY
+
+python3 - "$IMAGE_PAYLOAD_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+required = (
+    "size guard mutation failed",
+    "limit drift mutation failed",
+    "decode ordering mutation failed",
+    "hosted pull-request check",
+)
+
+if statuses != ["status: completed"] or any(item not in plan for item in required):
+    raise SystemExit(
+        "Image decode payload plan must record completed status and actual verification."
     )
 PY
 

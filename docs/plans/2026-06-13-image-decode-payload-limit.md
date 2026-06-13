@@ -1,7 +1,7 @@
 ---
 title: Image Decode Payload Limit
 type: security
-status: in_progress
+status: completed
 date: 2026-06-13
 ---
 
@@ -70,3 +70,32 @@ Files: `README.md`, `SECURITY.md`, `VISION.md`, `CHANGES.md`
   secret scans.
 - Take one bounded exact-head pull-request and CodeQL snapshot after push; do
   not poll.
+
+## Work Completed
+
+- Added one 5 MiB image-data constant to `Picture`.
+- Rejected empty and oversized `NSData` before `UIImage` decoding while
+  preserving valid in-range callbacks.
+- Extended the static baseline with exact-limit, no-logging, and
+  validation-before-decode contracts.
+- Updated repository guidance with both the decode boundary and the remaining
+  whole-response buffering limitation.
+
+## Verification Completed
+
+- `make check`, `make lint`, `make test`, and `make build` passed against the
+  final implementation; each target ran the maintained static baseline.
+- `sh -n scripts/check-baseline.sh`, plist and workspace XML parsing,
+  executable-mode verification, `git diff --check`, and the intended-file
+  secret scan passed.
+- `xcodebuild` project listing was skipped because `xcodebuild` is not installed
+  on this Linux host.
+- The size guard mutation failed with `Image decoding must enforce the reviewed
+  5 MiB data boundary without logging remote content.`
+- The limit drift mutation failed with `Image decoding must enforce the reviewed
+  5 MiB data boundary without logging remote content.`
+- The decode ordering mutation failed with `Image byte validation must remain
+  ahead of UIKit decoding and callbacks.`
+- The hosted pull-request check is not available before push; one bounded
+  exact-head snapshot will be recorded in the engineering tracker without
+  polling.
