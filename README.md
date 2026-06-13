@@ -67,9 +67,10 @@ make check
 
 The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
-card queue handling. It also verifies that location updates stop after a usable
-callback location or failure and that location failures do not log raw error
-details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
+card queue handling. It also verifies that location updates start only after
+when-in-use or always authorization is granted, stop after a usable callback
+location or failure, and do not log raw error details. The API endpoint guard
+parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
 fragments before sending coordinates. Coordinate parameters are trimmed,
 parsed completely, and checked against latitude/longitude ranges before
@@ -124,6 +125,9 @@ When the required SDK or runtime is unavailable, use static checks and source re
   images.
 - Keep location updates scoped to the active restaurant lookup and avoid raw
   Core Location error details in logs.
+- Start location updates only after Core Location reports an authorized state;
+  requesting when-in-use permission is asynchronous and must not trigger an
+  eager lookup.
 - Use the delegate-provided callback location for lookups instead of reading
   potentially stale manager state.
 

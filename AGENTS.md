@@ -49,7 +49,7 @@
 - `FINN_API_BASE_URL` is the local build setting used to configure the restaurant API endpoint.
 - Keep private endpoints, API credentials, signing files, and local `.xcconfig` files out of source control.
 - Avoid logging location data, restaurant preferences, or private API response payloads.
-- Use the delegate-provided callback location, stop updates after the first usable fix or failure, and keep failure logs free of raw Core Location details.
+- Start location updates only after an authorized Core Location state, use the delegate-provided callback location, stop updates after the first usable fix or failure, and keep failure logs free of raw Core Location details.
 - Coordinate parameters must be non-blank, parse completely as finite numbers, and remain within latitude and longitude ranges before restaurant API requests.
 - `FINN_API_BASE_URL` must resolve to HTTPS with a host and no userinfo, query, fragment, or unresolved build-setting placeholder.
 - Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.

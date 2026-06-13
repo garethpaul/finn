@@ -40,8 +40,9 @@ Helpful reports include:
 If this project requests device permissions such as location, camera, microphone, contacts, Bluetooth, health data, or local storage access, reports should describe the permission involved and whether sensitive data can be accessed, persisted, or transmitted unexpectedly. Please avoid testing against real third-party user data or accounts you do not control.
 
 Finn's location flow should use a single foreground coordinate lookup for the
-restaurant request, stop updates after a usable fix or failure, and avoid raw
-location coordinates or Core Location error details in logs.
+restaurant request, start updates only after Core Location reports when-in-use
+or always authorization, stop updates after a usable fix or failure, and avoid
+raw location coordinates or Core Location error details in logs.
 
 Restaurant image URLs should use HTTPS with a parsed host and no embedded
 username/password, and swipe preference events should not be written to

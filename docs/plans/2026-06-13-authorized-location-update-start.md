@@ -2,7 +2,7 @@
 title: Authorized Location Update Start
 type: privacy
 date: 2026-06-13
-status: planned
+status: completed
 execution: code
 ---
 
@@ -45,3 +45,16 @@ granted the requested scope.
 
 - Changing requested accuracy, location retention, API coordinates, or cards.
 - Modernizing the legacy Swift/Core Location API surface.
+
+## Verification Completed
+
+- The focused source and documentation contracts passed in an isolated copy,
+  and six hostile mutations were rejected: eager initial start, missing callback
+  start, missing callback stop, loss of when-in-use authorization, stale plan
+  status, and missing verification evidence.
+- `make check`, `make lint`, `make test`, and `make build` passed against the
+  completed implementation and plan record.
+- `xcodebuild was unavailable` on this Linux host, so no signed application or
+  simulator build was attempted.
+- No live location authorization, restaurant API request, image load, or card
+  interaction was performed.

@@ -18,6 +18,7 @@ BRIDGING_HEADER_PLAN="$ROOT_DIR/docs/plans/2026-06-12-portable-bridging-header-p
 IMAGE_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-decode-payload-limit.md"
 STREAMING_IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-streaming-image-response-limit.md"
 IMAGE_MEDIA_TYPE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-response-media-type.md"
+AUTHORIZED_LOCATION_PLAN="$ROOT_DIR/docs/plans/2026-06-13-authorized-location-update-start.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -62,7 +63,8 @@ for path in \
   "docs/plans/2026-06-12-portable-bridging-header-path.md" \
   "docs/plans/2026-06-13-image-decode-payload-limit.md" \
   "docs/plans/2026-06-13-streaming-image-response-limit.md" \
-  "docs/plans/2026-06-13-image-response-media-type.md"; do
+  "docs/plans/2026-06-13-image-response-media-type.md" \
+  "docs/plans/2026-06-13-authorized-location-update-start.md"; do
   require_file "$path"
 done
 
@@ -164,6 +166,49 @@ if ! grep -Fq "let cleanLat = lat.stringByTrimmingCharactersInSet" "$api" ||
 fi
 
 view="$ROOT_DIR/Finn/ViewController.swift"
+python3 - "$view" <<'PY'
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1]).read_text(encoding="utf-8")
+view_load = source.split("    override func viewDidLoad()", 1)[1].split(
+    "    func locationAuthorizationAllowsUpdates", 1
+)[0]
+authorization_helper = source.split("    func locationAuthorizationAllowsUpdates", 1)[1].split(
+    "    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus", 1
+)[0]
+callback = source.split("    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus", 1)[1].split(
+    "    func locationManager(manager: CLLocationManager!, didUpdateLocations", 1
+)[0]
+
+contracts = (
+    "authorizationStatus == CLAuthorizationStatus.NotDetermined",
+    "locationManager.requestWhenInUseAuthorization()",
+    "locationAuthorizationAllowsUpdates(authorizationStatus)",
+    "locationManager.startUpdatingLocation()",
+)
+if any(view_load.count(contract) != 1 for contract in contracts):
+    raise SystemExit("Initial location updates must remain authorization-gated.")
+if not all(
+    view_load.index(first) < view_load.index(second)
+    for first, second in zip(contracts, contracts[1:])
+):
+    raise SystemExit("Authorization checks must precede the initial location start.")
+for contract in (
+    "status == CLAuthorizationStatus.AuthorizedWhenInUse",
+    "status == CLAuthorizationStatus.AuthorizedAlways",
+):
+    if authorization_helper.count(contract) != 1:
+        raise SystemExit("Location updates must accept both authorized Core Location states.")
+for contract in (
+    "locationAuthorizationAllowsUpdates(status)",
+    "manager.startUpdatingLocation()",
+    "manager.stopUpdatingLocation()",
+):
+    if callback.count(contract) != 1:
+        raise SystemExit("Authorization callback start/stop contracts must remain unique.")
+PY
+
 if grep -Fq "println(lat)" "$view" ||
   grep -Fq "println(lon)" "$view" ||
   grep -Fq "error.localizedDescription" "$view" ||
@@ -576,11 +621,28 @@ if ! grep -Fq "status: completed" "$IMAGE_MEDIA_TYPE_PLAN" ||
   exit 1
 fi
 
+if ! grep -Fq "status: completed" "$AUTHORIZED_LOCATION_PLAN" ||
+  ! grep -Fq "six hostile mutations were rejected" "$AUTHORIZED_LOCATION_PLAN" ||
+  ! grep -Fq "xcodebuild was unavailable" "$AUTHORIZED_LOCATION_PLAN" ||
+  ! grep -Fq "No live location authorization" "$AUTHORIZED_LOCATION_PLAN"; then
+  printf '%s\n' "Authorized location start plan must record completed local verification." >&2
+  exit 1
+fi
+
 if ! grep -Fq "Missing or non-image response MIME types are cancelled" "$ROOT_DIR/README.md" ||
   ! grep -Fq "Missing or non-image MIME types should be rejected" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq 'require an `image/` MIME type' "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Rejected missing and non-image restaurant response MIME types" "$ROOT_DIR/CHANGES.md"; then
   printf '%s\n' "Project docs must preserve the restaurant image media-type boundary." >&2
+  exit 1
+fi
+
+if ! grep -Fq "location updates start only after" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "start updates only after Core Location reports" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "Location updates begin only after Core Location reports" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Gated restaurant location updates" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "Start location updates only after an authorized Core Location state" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project docs must preserve the authorized location-start boundary." >&2
   exit 1
 fi
 

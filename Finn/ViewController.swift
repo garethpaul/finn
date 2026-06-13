@@ -50,12 +50,13 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
         super.viewDidLoad()
     
         
-        locationManager.requestWhenInUseAuthorization()
-        
-        if (CLLocationManager.locationServicesEnabled())
-        {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+
+        let authorizationStatus = CLLocationManager.authorizationStatus()
+        if authorizationStatus == CLAuthorizationStatus.NotDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        } else if CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(authorizationStatus) {
             locationManager.startUpdatingLocation()
         }
         
@@ -77,6 +78,19 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
         self.navigationController?.navigationBar.topItem?.title = ""
         self.navigationController?.navigationBar.barTintColor = toColor("4A90E2")
 
+    }
+
+    func locationAuthorizationAllowsUpdates(status: CLAuthorizationStatus) -> Bool {
+        return status == CLAuthorizationStatus.AuthorizedWhenInUse ||
+            status == CLAuthorizationStatus.AuthorizedAlways
+    }
+
+    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(status) {
+            manager.startUpdatingLocation()
+        } else {
+            manager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {

@@ -2,6 +2,8 @@
 
 ## 2026-06-13
 
+- Gated restaurant location updates on an already granted or callback-delivered
+  Core Location authorization state.
 - Rejected missing and non-image restaurant response MIME types before declared
   length acceptance or body buffering.
 - Replaced whole-response image buffering with incremental delegate delivery,

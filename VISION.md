@@ -36,6 +36,8 @@ Current baseline:
   placeholders, missing hosts, embedded userinfo, query strings, and fragments.
 - Restaurant lookup coordinate parameters are parsed completely and checked
   against valid latitude and longitude ranges before requests.
+- Location updates begin only after Core Location reports an authorized state;
+  the asynchronous when-in-use prompt never triggers an eager lookup.
 - Rounded location coordinates are not logged from the view controller.
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.
