@@ -15,6 +15,7 @@ import MDCSwipeToChoose
 class FinnPickerView : MDCSwipeToChooseView {
     var restaurant: Restaurant?
     var res: Restaurant?
+    private let picture = Picture()
 
     var infoView: UIView = UIView()
 
@@ -68,12 +69,11 @@ class FinnPickerView : MDCSwipeToChooseView {
     }
 
     func loadImageView() {
-        let pic = Picture()
         if let restaurant = restaurant {
             let url_string = restaurant.image
             if let url = NSURL(string: url_string) {
-                pic.get(url, handler: {image, error in
-                    self.imageView.image = image
+                picture.get(url, handler: { [weak self] image, error in
+                    self?.imageView.image = image
                 })
             }
         }
@@ -94,4 +94,8 @@ class FinnPickerView : MDCSwipeToChooseView {
         self.infoView.addSubview(nameLabel)
             
         }
+
+    deinit {
+        picture.cancel()
+    }
 }

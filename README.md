@@ -79,9 +79,10 @@ Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
 Restaurant image downloads inspect parsed URL parts, require HTTPS with a host,
 and reject embedded username/password before creating image requests.
-Image responses larger than 5 MiB are rejected before UIKit decoding. The
-legacy `NSURLConnection` convenience API still buffers the full response before
-that decode guard runs, so this is not a streaming download limit.
+Image downloads use incremental `NSURLConnection` delegate callbacks, reject a
+declared or cumulative response over 5 MiB before UIKit decoding, and use a
+15-second request timeout. Picker cards retain the active loader, cancel it when
+released, and avoid a strong image-callback cycle.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
@@ -113,6 +114,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   requests.
 - Restaurant image URLs should be loaded over HTTPS only.
 - Restaurant image URLs should include a host and no embedded username/password.
+- Restaurant image responses should enforce the 5 MiB limit while bytes arrive,
+  not only after a complete response has been buffered.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
 - Picker views should not force-unwrap restaurant state when rendering names or
@@ -138,6 +141,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   lookup coordinate parameter coverage.
 - See `docs/plans/2026-06-09-image-url-parts-guard.md` for parsed restaurant
   image URL validation.
+- See `docs/plans/2026-06-13-streaming-image-response-limit.md` for the
+  transport-level image body boundary.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

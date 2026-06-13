@@ -53,6 +53,9 @@
 - Coordinate parameters must be non-blank, parse completely as finite numbers, and remain within latitude and longitude ranges before restaurant API requests.
 - `FINN_API_BASE_URL` must resolve to HTTPS with a host and no userinfo, query, fragment, or unresolved build-setting placeholder.
 - Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.
+- Restaurant image responses must enforce the 5 MiB limit against declared and
+  cumulative bytes before UIKit decoding, use a finite timeout, and clear
+  request state without logging transport details.
 - Trim and reject blank restaurant names or image URLs before cards are created, and keep picker rendering tolerant of missing restaurant state.
 - Hosted macOS CI proves the checked-in Xcode project parses and static contracts pass; it does not prove CocoaPods installation, signing, location authorization, live API behavior, or image rendering.
 

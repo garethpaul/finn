@@ -16,6 +16,7 @@ COORDINATE_RANGE_PLAN="$ROOT_DIR/docs/plans/2026-06-10-api-coordinate-range-guar
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-project-validation.md"
 BRIDGING_HEADER_PLAN="$ROOT_DIR/docs/plans/2026-06-12-portable-bridging-header-path.md"
 IMAGE_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-decode-payload-limit.md"
+STREAMING_IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-streaming-image-response-limit.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -58,7 +59,8 @@ for path in \
   "docs/plans/2026-06-08-finn-maintenance-baseline.md" \
   "docs/plans/2026-06-10-hosted-project-validation.md" \
   "docs/plans/2026-06-12-portable-bridging-header-path.md" \
-  "docs/plans/2026-06-13-image-decode-payload-limit.md"; do
+  "docs/plans/2026-06-13-image-decode-payload-limit.md" \
+  "docs/plans/2026-06-13-streaming-image-response-limit.md"; do
   require_file "$path"
 done
 
@@ -178,6 +180,7 @@ if grep -Fq "println(lat)" "$view" ||
 fi
 
 picture="$ROOT_DIR/Finn/Picture.swift"
+picker="$ROOT_DIR/Finn/FinnPickerView.swift"
 if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   grep -Fq "restaurant!" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   grep -Fq "UIImage(data: data)!" "$picture" ||
@@ -188,38 +191,104 @@ if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" |
   ! grep -Fq 'scheme != "https"' "$picture" ||
   ! grep -Fq "if let host = url.host" "$picture" ||
   ! grep -Fq "host.isEmpty" "$picture" ||
-  ! grep -Fq "url.user != nil || url.password != nil" "$picture" ||
-  ! grep -Fq "if let imageData = data" "$picture"; then
+  ! grep -Fq "url.user != nil || url.password != nil" "$picture"; then
   printf '%s\n' "Image loading and picker rendering must guard invalid URLs, missing restaurants, and failed image decoding." >&2
   exit 1
 fi
 
 if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" -ne 1 ] ||
-  ! grep -Fq "imageData.length == 0 || imageData.length > self.maxImageDataBytes" "$picture" ||
+  [ "$(grep -Fc "private let requestTimeout: NSTimeInterval = 15" "$picture")" -ne 1 ] ||
+  ! grep -Fq "class Picture: NSObject, NSURLConnectionDataDelegate" "$picture" ||
+  grep -Fq "sendAsynchronousRequest" "$picture" ||
+  ! grep -Fq "response.expectedContentLength > Int64(maxImageDataBytes)" "$picture" ||
+  ! grep -Fq "receivedData.length > maxImageDataBytes - data.length" "$picture" ||
+  ! grep -Fq "receivedData.appendData(data)" "$picture" ||
+  ! grep -Fq "connectionDidFinishLoading" "$picture" ||
+  ! grep -Fq "private let picture = Picture()" "$picker" ||
+  ! grep -Fq "[weak self]" "$picker" ||
+  ! grep -Fq "picture.cancel()" "$picker" ||
   grep -Eq 'println\(|NSLog\(' "$picture"; then
-  printf '%s\n' "Image decoding must enforce the reviewed 5 MiB data boundary without logging remote content." >&2
+  printf '%s\n' "Image transport must enforce the streaming 5 MiB boundary without logging remote content." >&2
   exit 1
 fi
 
-python3 - "$picture" <<'PY'
+python3 - "$picture" "$picker" <<'PY'
 import re
 import sys
 from pathlib import Path
 
 source = Path(sys.argv[1]).read_text()
+picker = Path(sys.argv[2]).read_text()
 limits = re.findall(r"private let maxImageDataBytes = ([^\n]+)", source)
 if limits != ["5 * 1024 * 1024"]:
     raise SystemExit("Picture must define one exact 5 MiB image-data limit.")
 
-contract = (
-    "if let imageData = data",
-    "imageData.length == 0 || imageData.length > self.maxImageDataBytes",
-    "UIImage(data: imageData)",
-    "handler(image: image, error)",
+def section(start, end):
+    if start not in source or end not in source:
+        raise SystemExit("Picture must keep each streaming delegate boundary.")
+    return source.split(start, 1)[1].split(end, 1)[0]
+
+response = section(
+    "func connection(connection: NSURLConnection!, didReceiveResponse response: NSURLResponse!)",
+    "func connection(connection: NSURLConnection!, didReceiveData data: NSData!)",
 )
-positions = [source.find(fragment) for fragment in contract]
-if -1 in positions or positions != sorted(positions) or len(set(positions)) != len(positions):
-    raise SystemExit("Image byte validation must remain ahead of UIKit decoding and callbacks.")
+data = section(
+    "func connection(connection: NSURLConnection!, didReceiveData data: NSData!)",
+    "func connectionDidFinishLoading(connection: NSURLConnection!)",
+)
+finish = section(
+    "func connectionDidFinishLoading(connection: NSURLConnection!)",
+    "func connection(connection: NSURLConnection!, didFailWithError error: NSError!)",
+)
+failure = section(
+    "func connection(connection: NSURLConnection!, didFailWithError error: NSError!)",
+    "private func isActiveConnection(connection: NSURLConnection)",
+)
+reset = section("private func resetState()", "deinit")
+
+def ordered(text, fragments, message):
+    positions = [text.find(fragment) for fragment in fragments]
+    if -1 in positions or positions != sorted(positions) or len(set(positions)) != len(positions):
+        raise SystemExit(message)
+
+ordered(
+    response,
+    (
+        "receivedData.length = 0",
+        "response.expectedContentLength > Int64(maxImageDataBytes)",
+        "connection.cancel()",
+        "resetState()",
+    ),
+    "Declared image length must be rejected before response data is buffered.",
+)
+ordered(
+    data,
+    (
+        "data.length > maxImageDataBytes",
+        "receivedData.length > maxImageDataBytes - data.length",
+        "connection.cancel()",
+        "resetState()",
+        "receivedData.appendData(data)",
+    ),
+    "Cumulative image bytes must be bounded before each append.",
+)
+ordered(
+    finish,
+    (
+        "receivedData.length > 0",
+        "UIImage(data: receivedData)",
+        "resetState()",
+        "handler?(image: image, nil)",
+    ),
+    "Image decoding and callbacks must occur only after bounded completion.",
+)
+if "resetState()" not in failure or any(
+    fragment not in reset
+    for fragment in ("activeConnection = nil", "completionHandler = nil", "receivedData.length = 0")
+):
+    raise SystemExit("Every terminal image path must clear connection, handler, and bytes.")
+if picker.find("private let picture = Picture()") > picker.find("picture.get(url"):
+    raise SystemExit("Picker must retain its image loader before starting a request.")
 PY
 
 if ! grep -Fq "*.xcconfig" "$ROOT_DIR/.gitignore" ||
@@ -310,13 +379,13 @@ if ! grep -Fq "GitHub Actions" "$ROOT_DIR/SECURITY.md" ||
   exit 1
 fi
 
-if ! grep -Fq "larger than 5 MiB are rejected before UIKit decoding" "$ROOT_DIR/README.md" ||
-  ! grep -Fq "still buffers the full response" "$ROOT_DIR/README.md" ||
-  ! grep -Fq "image data over 5 MiB should be rejected before UIKit decoding" "$ROOT_DIR/SECURITY.md" ||
-  ! grep -Fq "still buffers the whole response" "$ROOT_DIR/SECURITY.md" ||
-  ! grep -Fq "image decoding rejects empty data and payloads over 5 MiB" "$ROOT_DIR/VISION.md" ||
-  ! grep -Fq "Rejected empty and over-5-MiB restaurant image data" "$ROOT_DIR/CHANGES.md"; then
-  printf '%s\n' "Project docs must record the image decode boundary and legacy buffering limitation." >&2
+if ! grep -Fq 'incremental `NSURLConnection` delegate callbacks' "$ROOT_DIR/README.md" ||
+  ! grep -Fq "declared or cumulative response over 5 MiB" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Restaurant image responses over 5 MiB should be rejected while delegate chunks" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "declared or cumulative payloads over 5 MiB" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Replaced whole-response image buffering with incremental delegate delivery" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "Restaurant image responses must enforce the 5 MiB limit" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project docs must record the streaming image response boundary." >&2
   exit 1
 fi
 
@@ -436,6 +505,30 @@ required = (
 if statuses != ["status: completed"] or any(item not in plan for item in required):
     raise SystemExit(
         "Image decode payload plan must record completed status and actual verification."
+    )
+PY
+
+python3 - "$STREAMING_IMAGE_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+required = (
+    "convenience-buffering mutation failed",
+    "declared-length mutation failed",
+    "cumulative-limit mutation failed",
+    "decode-completion mutation failed",
+    "cleanup mutation failed",
+    "picker-retention mutation failed",
+    "hosted pull-request check",
+)
+
+if statuses != ["status: completed"] or any(item not in plan for item in required):
+    raise SystemExit(
+        "Streaming image response plan must record completed status and actual verification."
     )
 PY
 

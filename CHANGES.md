@@ -2,9 +2,13 @@
 
 ## 2026-06-13
 
+- Replaced whole-response image buffering with incremental delegate delivery,
+  declared and cumulative 5 MiB limits, finite timeout, and terminal cleanup.
+- Retained and cancelled each picker card's active loader while avoiding a
+  strong image-callback cycle.
 - Rejected empty and over-5-MiB restaurant image data before UIKit decoding.
 - Added static ordering, limit, documentation, and completed-evidence contracts
-  while preserving the legacy whole-response buffering limitation.
+  for the initial decode boundary.
 
 ## 2026-06-12
 

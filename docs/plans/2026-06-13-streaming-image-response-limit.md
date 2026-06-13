@@ -1,7 +1,7 @@
 ---
 title: Streaming Image Response Limit
 type: security
-status: planned
+status: completed
 date: 2026-06-13
 ---
 
@@ -98,8 +98,37 @@ Files: `README.md`, `SECURITY.md`, `VISION.md`, `CHANGES.md`, `AGENTS.md`
 
 ## Work Completed
 
-Pending implementation.
+- Replaced the whole-response convenience request with an
+  `NSURLConnectionDataDelegate` loader that receives incremental chunks.
+- Added one 5 MiB boundary for both declared response length and cumulative
+  data, including unknown or inaccurate content lengths.
+- Added a 15-second request timeout, active-connection identity checks, and
+  cleanup of the connection, callback, and accumulated bytes on every terminal
+  path.
+- Retained one loader per picker card, cancelled it when the card is released,
+  and used a weak image callback capture.
+- Extended the static baseline with streaming, ordering, cleanup, lifetime,
+  documentation, and completed-plan contracts.
+- Updated contributor, security, maintenance, vision, and change guidance with
+  the transport-level boundary.
 
 ## Verification Completed
 
-Pending implementation and verification.
+- `make check`, `make lint`, `make test`, and `make build` passed against the
+  final implementation.
+- The convenience-buffering mutation failed with `Image transport must enforce
+  the streaming 5 MiB boundary without logging remote content.`
+- The declared-length mutation failed with the same streaming-boundary error.
+- The cumulative-limit mutation failed with the same streaming-boundary error.
+- The decode-completion mutation failed with `Image decoding and callbacks must
+  occur only after bounded completion.`
+- The cleanup mutation failed with `Every terminal image path must clear
+  connection, handler, and bytes.`
+- The picker-retention mutation failed with the streaming-boundary error.
+- A timeout-drift mutation also failed with the streaming-boundary error.
+- `xcodebuild` project listing was skipped because `xcodebuild` is not installed
+  on this Linux host; compilation, signing, simulator/device execution, and live
+  image rendering are not claimed.
+- The hosted pull-request check is not available before the implementation
+  push; bounded exact-head evidence will be recorded in the engineering tracker
+  without a watch loop.
