@@ -2,6 +2,8 @@
 
 ## 2026-06-13
 
+- Made static verification independent of the caller's working directory by
+  resolving the baseline checker from the loaded Makefile.
 - Gated restaurant location updates on an already granted or callback-delivered
   Core Location authorization state.
 - Rejected missing and non-image restaurant response MIME types before declared

@@ -19,6 +19,7 @@ IMAGE_PAYLOAD_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-decode-payload-limit.m
 STREAMING_IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-streaming-image-response-limit.md"
 IMAGE_MEDIA_TYPE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-response-media-type.md"
 AUTHORIZED_LOCATION_PLAN="$ROOT_DIR/docs/plans/2026-06-13-authorized-location-update-start.md"
+LOCATION_INDEPENDENT_MAKE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-location-independent-make.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -64,9 +65,24 @@ for path in \
   "docs/plans/2026-06-13-image-decode-payload-limit.md" \
   "docs/plans/2026-06-13-streaming-image-response-limit.md" \
   "docs/plans/2026-06-13-image-response-media-type.md" \
-  "docs/plans/2026-06-13-authorized-location-update-start.md"; do
+  "docs/plans/2026-06-13-authorized-location-update-start.md" \
+  "docs/plans/2026-06-13-location-independent-make.md"; do
   require_file "$path"
 done
+
+if ! grep -Fq 'ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
+  ! grep -Fq '"$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
+  printf '%s\n' "Makefile verification must resolve the checker from the loaded Makefile." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$LOCATION_INDEPENDENT_MAKE_PLAN" ||
+  ! grep -Fq "from /tmp" "$LOCATION_INDEPENDENT_MAKE_PLAN" ||
+  ! grep -Fq "absolute Makefile path" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Made static verification independent" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Location-independent Make plan and guidance must record completed external verification." >&2
+  exit 1
+fi
 
 if ! grep -Fq "Alamofire (1.2.2)" "$ROOT_DIR/Podfile.lock" ||
   ! grep -Fq "MDCSwipeToChoose (0.2.2)" "$ROOT_DIR/Podfile.lock"; then

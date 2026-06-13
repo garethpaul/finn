@@ -65,6 +65,10 @@ Run the static baseline:
 make check
 ```
 
+Use the absolute Makefile path to run the same gate from another working
+directory. Verification resolves the checker relative to the loaded Makefile
+rather than the caller's directory.
+
 The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
 card queue handling. It also verifies that location updates start only after
