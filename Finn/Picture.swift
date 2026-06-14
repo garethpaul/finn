@@ -51,6 +51,20 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
         resetState()
     }
 
+    func connection(connection: NSURLConnection!, willSendRequest request: NSURLRequest!, redirectResponse response: NSURLResponse!) -> NSURLRequest! {
+        if !isActiveConnection(connection) {
+            return nil
+        }
+
+        if response != nil {
+            connection.cancel()
+            resetState()
+            return nil
+        }
+
+        return request
+    }
+
     func connection(connection: NSURLConnection!, didReceiveResponse response: NSURLResponse!) {
         if !isActiveConnection(connection) {
             return

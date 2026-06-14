@@ -46,6 +46,7 @@ Current baseline:
 - Card queue setup guards against API responses with too few restaurants.
 - Restaurant names and image URLs from the API are trimmed and blank values are
   skipped before card creation.
+- Restaurant image redirects are rejected before any redirected request starts.
 - Picker views avoid force-unwrapping restaurant state while rendering card
   names and images.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.

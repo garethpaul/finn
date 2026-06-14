@@ -53,6 +53,7 @@
 - Coordinate parameters must be non-blank, parse completely as finite numbers, and remain within latitude and longitude ranges before restaurant API requests.
 - `FINN_API_BASE_URL` must resolve to HTTPS with a host and no userinfo, query, fragment, or unresolved build-setting placeholder.
 - Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.
+- Restaurant image redirects are rejected before redirected requests start.
 - Restaurant image responses must enforce the 5 MiB limit against declared and
   cumulative bytes before UIKit decoding, use a finite timeout, and clear
   request state without logging transport details.

@@ -53,6 +53,8 @@ arrive and before UIKit decoding. Declared response lengths and cumulative
 bytes must both be checked because servers may omit or misstate content length.
 Missing or non-image MIME types should be rejected before declared-length
 acceptance or response buffering.
+Restaurant image redirects are rejected before a redirected request can bypass
+the validated URL boundary.
 The active picker should retain and cancel its finite-timeout loader without
 logging transport details or keeping a strong callback cycle.
 

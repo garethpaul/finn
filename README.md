@@ -123,6 +123,7 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Restaurant image URLs should include a host and no embedded username/password.
 - Restaurant image responses should enforce the 5 MiB limit while bytes arrive,
   not only after a complete response has been buffered.
+- Restaurant image redirects are rejected before a redirected request can load.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
 - Picker views should not force-unwrap restaurant state when rendering names or

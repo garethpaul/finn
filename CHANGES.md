@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-14
+
+- Restaurant image redirects are rejected before redirected requests can bypass
+  the validated URL boundary.
+
 ## 2026-06-13
 
 - Made static verification independent of the caller's working directory by

@@ -20,6 +20,8 @@ STREAMING_IMAGE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-streaming-image-response-l
 IMAGE_MEDIA_TYPE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-image-response-media-type.md"
 AUTHORIZED_LOCATION_PLAN="$ROOT_DIR/docs/plans/2026-06-13-authorized-location-update-start.md"
 LOCATION_INDEPENDENT_MAKE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-location-independent-make.md"
+IMAGE_REDIRECT_PLAN="$ROOT_DIR/docs/plans/2026-06-14-image-redirect-rejection.md"
+IMAGE_REDIRECT_CHECK="$ROOT_DIR/scripts/check-image-redirect-boundary.py"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -66,9 +68,22 @@ for path in \
   "docs/plans/2026-06-13-streaming-image-response-limit.md" \
   "docs/plans/2026-06-13-image-response-media-type.md" \
   "docs/plans/2026-06-13-authorized-location-update-start.md" \
-  "docs/plans/2026-06-13-location-independent-make.md"; do
+  "docs/plans/2026-06-13-location-independent-make.md" \
+  "docs/plans/2026-06-14-image-redirect-rejection.md" \
+  "scripts/check-image-redirect-boundary.py"; do
   require_file "$path"
 done
+
+python3 "$IMAGE_REDIRECT_CHECK" "$ROOT_DIR/Finn/Picture.swift" "$IMAGE_REDIRECT_PLAN"
+
+if ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project guidance must preserve the image redirect boundary." >&2
+  exit 1
+fi
 
 if ! grep -Fq 'ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
   ! grep -Fq '"$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
