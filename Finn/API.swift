@@ -9,6 +9,28 @@
 import Foundation
 import Alamofire
 
+let RestaurantAPIResponseMaxBytes = 1024 * 1024
+
+func acceptsRestaurantAPIResponse(response: NSURLResponse?, data: NSData?) -> Bool {
+    if let httpResponse = response as? NSHTTPURLResponse {
+        if httpResponse.statusCode != 200 {
+            return false
+        }
+    } else {
+        return false
+    }
+
+    if response?.MIMEType?.lowercaseString != "application/json" {
+        return false
+    }
+
+    if let responseData = data {
+        return responseData.length <= RestaurantAPIResponseMaxBytes
+    }
+
+    return false
+}
+
 class APIClient {
     
     typealias JSON = AnyObject
@@ -65,8 +87,26 @@ class APIClient {
         }
 
         if let requestURL = configuredAPIURL() {
-            Alamofire.request(.GET, requestURL, parameters: ["lat": cleanLat, "lon": cleanLon]).responseJSON() {
-                (_, _, JSON, _) in
+            Alamofire.request(.GET, requestURL, parameters: ["lat": cleanLat, "lon": cleanLon]).response {
+                (_, response, responseObject, error) in
+
+                let data = responseObject as? NSData
+
+                if error != nil || !acceptsRestaurantAPIResponse(response, data: data) {
+                    completion(result: new_result)
+                    return
+                }
+
+                var jsonError: NSError?
+                var JSON: AnyObject?
+                if let responseData = data {
+                    JSON = NSJSONSerialization.JSONObjectWithData(responseData, options: nil, error: &jsonError)
+                }
+
+                if jsonError != nil {
+                    completion(result: new_result)
+                    return
+                }
 
                 if let json = JSON as? Dictionary<String, AnyObject> {
                     if let restaurants = json["data"] as? [[String : AnyObject]] {

@@ -2,6 +2,7 @@
 
 ## 2026-06-14
 
+- Required HTTP 200, `application/json`, and at most 1 MiB before restaurant API JSON parsing.
 - Restaurant image redirects are rejected before redirected requests can bypass
   the validated URL boundary.
 

@@ -22,6 +22,8 @@ AUTHORIZED_LOCATION_PLAN="$ROOT_DIR/docs/plans/2026-06-13-authorized-location-up
 LOCATION_INDEPENDENT_MAKE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-location-independent-make.md"
 IMAGE_REDIRECT_PLAN="$ROOT_DIR/docs/plans/2026-06-14-image-redirect-rejection.md"
 IMAGE_REDIRECT_CHECK="$ROOT_DIR/scripts/check-image-redirect-boundary.py"
+API_RESPONSE_PLAN="$ROOT_DIR/docs/plans/2026-06-14-api-response-boundary.md"
+API_RESPONSE_CHECK="$ROOT_DIR/scripts/check-api-response-boundary.py"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -70,11 +72,29 @@ for path in \
   "docs/plans/2026-06-13-authorized-location-update-start.md" \
   "docs/plans/2026-06-13-location-independent-make.md" \
   "docs/plans/2026-06-14-image-redirect-rejection.md" \
-  "scripts/check-image-redirect-boundary.py"; do
+  "docs/plans/2026-06-14-api-response-boundary.md" \
+  "scripts/check-image-redirect-boundary.py" \
+  "scripts/check-api-response-boundary.py"; do
   require_file "$path"
 done
 
 python3 "$IMAGE_REDIRECT_CHECK" "$ROOT_DIR/Finn/Picture.swift" "$IMAGE_REDIRECT_PLAN"
+python3 "$API_RESPONSE_CHECK" "$ROOT_DIR/Finn/API.swift"
+
+if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
+  ! grep -Fq "hostile mutations were rejected" "$API_RESPONSE_PLAN" ||
+  ! grep -Fq "make check" "$API_RESPONSE_PLAN"; then
+  printf '%s\n' "Restaurant API response boundary plan must record completed validation." >&2
+  exit 1
+fi
+
+for guidance in README.md SECURITY.md VISION.md AGENTS.md; do
+  if ! grep -Fq 'Restaurant API JSON parsing requires HTTP 200' "$ROOT_DIR/$guidance" ||
+    ! grep -Fq 'no larger than 1 MiB.' "$ROOT_DIR/$guidance"; then
+    printf '%s\n' "Project guidance must preserve the restaurant API response boundary: $guidance" >&2
+    exit 1
+  fi
+done
 
 if ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/README.md" ||
   ! grep -Fq "Restaurant image redirects are rejected" "$ROOT_DIR/SECURITY.md" ||

@@ -57,6 +57,8 @@ Current baseline:
   explicit request-state cleanup.
 - Restaurant image responses require an `image/` MIME type before declared
   length acceptance or body buffering.
+- Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
+  no larger than 1 MiB.
 
 Next priorities:
 

@@ -90,6 +90,8 @@ declared or cumulative response over 5 MiB before UIKit decoding, and use a
 released, and avoid a strong image-callback cycle.
 Missing or non-image response MIME types are cancelled before declared-length
 acceptance or body buffering.
+Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
+no larger than 1 MiB.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the

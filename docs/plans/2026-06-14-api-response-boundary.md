@@ -2,7 +2,7 @@
 title: Restaurant API Response Boundary
 type: security
 date: 2026-06-14
-status: in-progress
+status: completed
 execution: code
 ---
 
@@ -42,4 +42,13 @@ fields.
 
 ## Verification
 
-- Pending implementation and bounded validation.
+- `sh -n scripts/check-baseline.sh`
+- `python3 scripts/check-api-response-boundary.py Finn/API.swift` passed the
+  12-case status, media-type, body-presence, and byte-limit matrix from both
+  the repository root and `/tmp`.
+- Six hostile mutations were rejected for the status code, byte limit,
+  media-type comparison, inclusive limit, raw-response callback, and transport
+  error gate.
+- `make check`, `make lint`, `make test`, and `make build` passed from the
+  repository root; the absolute-path `make check` gate also passed from
+  `/tmp`.

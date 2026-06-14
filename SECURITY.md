@@ -60,6 +60,8 @@ logging transport details or keeping a strong callback cycle.
 
 Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.
+Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
+no larger than 1 MiB.
 
 Restaurant lookup coordinate parameters should be parsed completely and kept
 within latitude and longitude ranges before any API request is sent.
