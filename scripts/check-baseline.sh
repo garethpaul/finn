@@ -24,6 +24,7 @@ IMAGE_REDIRECT_PLAN="$ROOT_DIR/docs/plans/2026-06-14-image-redirect-rejection.md
 IMAGE_REDIRECT_CHECK="$ROOT_DIR/scripts/check-image-redirect-boundary.py"
 API_RESPONSE_PLAN="$ROOT_DIR/docs/plans/2026-06-14-api-response-boundary.md"
 API_RESPONSE_CHECK="$ROOT_DIR/scripts/check-api-response-boundary.py"
+API_RESPONSE_EXECUTION_PLAN="$ROOT_DIR/docs/plans/2026-06-16-executable-api-response-policy-tests.md"
 PYTHON_PREFLIGHT_PLAN="$ROOT_DIR/docs/plans/2026-06-16-python-verification-preflight.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 PYTHON=${PYTHON:-python3}
@@ -61,6 +62,7 @@ for path in \
   "Finn.xcodeproj/project.pbxproj" \
   "Finn/BridgeHeader.h" \
   "Finn/API.swift" \
+  "Finn/RestaurantAPIResponsePolicy.swift" \
   "Finn/Info.plist" \
   "Finn/FinnPickerView.swift" \
   "Finn/Picture.swift" \
@@ -86,14 +88,59 @@ for path in \
   "docs/plans/2026-06-13-location-independent-make.md" \
   "docs/plans/2026-06-14-image-redirect-rejection.md" \
   "docs/plans/2026-06-14-api-response-boundary.md" \
+  "docs/plans/2026-06-16-executable-api-response-policy-tests.md" \
   "docs/plans/2026-06-16-python-verification-preflight.md" \
   "scripts/check-image-redirect-boundary.py" \
-  "scripts/check-api-response-boundary.py"; do
+  "scripts/check-api-response-boundary.py" \
+  "scripts/run-api-response-policy-tests.sh" \
+  "Tests/RestaurantAPIResponsePolicyTests/main.swift"; do
   require_file "$path"
 done
 
 "$PYTHON" "$IMAGE_REDIRECT_CHECK" "$ROOT_DIR/Finn/Picture.swift" "$IMAGE_REDIRECT_PLAN"
-"$PYTHON" "$API_RESPONSE_CHECK" "$ROOT_DIR/Finn/API.swift"
+"$PYTHON" "$API_RESPONSE_CHECK" \
+  "$ROOT_DIR/Finn/RestaurantAPIResponsePolicy.swift" \
+  "$ROOT_DIR/Finn/API.swift"
+
+"$PYTHON" - "$ROOT_DIR/Finn.xcodeproj/project.pbxproj" "$ROOT_DIR/Makefile" \
+  "$ROOT_DIR/scripts/run-api-response-policy-tests.sh" \
+  "$ROOT_DIR/Tests/RestaurantAPIResponsePolicyTests/main.swift" <<'PY'
+import sys
+from pathlib import Path
+
+project, makefile, runner, tests = (Path(path).read_text(encoding="utf-8") for path in sys.argv[1:])
+if project.count("RestaurantAPIResponsePolicy.swift in Sources") != 2:
+    raise SystemExit("RestaurantAPIResponsePolicy must belong to the app target once")
+if project.count("/* RestaurantAPIResponsePolicy.swift */") != 3:
+    raise SystemExit("RestaurantAPIResponsePolicy project references must remain complete and unique")
+if makefile.count("scripts/run-api-response-policy-tests.sh") != 1:
+    raise SystemExit("Every Make gate must invoke executable restaurant response tests once")
+runner_contract = (
+    "Finn/RestaurantAPIResponsePolicy.swift",
+    "Tests/RestaurantAPIResponsePolicyTests/main.swift",
+    'mktemp -d "${TMPDIR:-/tmp}/finn-api-response-tests.XXXXXX"',
+    "trap cleanup 0",
+)
+if any(runner.count(fragment) != 1 for fragment in runner_contract):
+    raise SystemExit("Restaurant response runner must compile production policy with bounded cleanup")
+test_contract = (
+    'true, "empty JSON response"',
+    'true, "case-insensitive MIME and size boundary"',
+    'false, "missing HTTP status"',
+    'false, "created status"',
+    'false, "no-content status"',
+    'false, "redirect status"',
+    'false, "client error status"',
+    'false, "server error status"',
+    'false, "missing MIME type"',
+    'false, "non-JSON MIME type"',
+    'false, "missing response data"',
+    'false, "negative response length"',
+    'false, "oversize response"',
+)
+if any(tests.count(fragment) != 1 for fragment in test_contract):
+    raise SystemExit("Executable restaurant response tests must preserve all 12 boundary cases")
+PY
 
 if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
   ! grep -Fq "hostile mutations were rejected" "$API_RESPONSE_PLAN" ||
@@ -101,6 +148,34 @@ if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
   printf '%s\n' "Restaurant API response boundary plan must record completed validation." >&2
   exit 1
 fi
+
+"$PYTHON" - "$API_RESPONSE_EXECUTION_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text(encoding="utf-8")
+frontmatter = plan.split("---", 2)[1]
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "all four Make gates passed",
+    "absolute Makefile path passed",
+    "production policy mutation failed",
+    "API delegation mutation failed",
+    "Xcode target membership mutation failed",
+    "accepted response mutation failed",
+    "rejected response mutation failed",
+    "plan evidence mutation failed",
+    "hosted pull-request check",
+)
+if (
+    re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE) != ["status: completed"]
+    or "## Verification Completed\n" not in plan
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run|not yet)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit("Executable restaurant API response plan must retain completed evidence")
+PY
 
 for guidance in README.md SECURITY.md VISION.md AGENTS.md; do
   if ! grep -Fq 'Restaurant API JSON parsing requires HTTP 200' "$ROOT_DIR/$guidance" ||
@@ -194,7 +269,7 @@ for python_preflight_contract in \
   fi
 done
 
-if [ "$(grep -Ec '^"\$PYTHON" ' "$ROOT_DIR/scripts/check-baseline.sh")" -ne 8 ] ||
+if [ "$(grep -Ec '^"\$PYTHON" ' "$ROOT_DIR/scripts/check-baseline.sh")" -ne 10 ] ||
   grep -Eq '^python3 ' "$ROOT_DIR/scripts/check-baseline.sh" ||
   grep -Eq '^[[:space:]]*printf .*Skipping Info\.plist XML parse' "$ROOT_DIR/scripts/check-baseline.sh"; then
   printf '%s\n' "Every Python-backed check must use the required preflighted interpreter." >&2

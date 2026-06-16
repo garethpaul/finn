@@ -2,6 +2,10 @@
 
 ## 2026-06-16
 
+- Extracted the restaurant response status/MIME/size predicate into app
+  production source and added a standalone Swift harness for all 12 boundaries.
+- Extended the maintained baseline to require API delegation, app-target
+  membership, harness wiring, and complete accepted/rejected case coverage.
 - The static gate requires GNU Make, a POSIX shell, and Python 3. Added an
   explicit interpreter override, actionable runtime diagnostics, and mandatory
   plist parsing after the shared preflight.

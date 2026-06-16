@@ -9,26 +9,13 @@
 import Foundation
 import Alamofire
 
-let RestaurantAPIResponseMaxBytes = 1024 * 1024
-
 func acceptsRestaurantAPIResponse(response: NSURLResponse?, data: NSData?) -> Bool {
+    var statusCode: Int?
     if let httpResponse = response as? NSHTTPURLResponse {
-        if httpResponse.statusCode != 200 {
-            return false
-        }
-    } else {
-        return false
+        statusCode = httpResponse.statusCode
     }
 
-    if response?.MIMEType?.lowercaseString != "application/json" {
-        return false
-    }
-
-    if let responseData = data {
-        return responseData.length <= RestaurantAPIResponseMaxBytes
-    }
-
-    return false
+    return acceptsRestaurantAPIResponseValues(statusCode, response?.MIMEType, data?.length)
 }
 
 class APIClient {

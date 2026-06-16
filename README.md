@@ -7,7 +7,7 @@
 
 `garethpaul/finn` is an Apple platform application or Objective-C/Swift sample. App for finding Restaurants/Food etc
 
-This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: Swift (11), C/C++ headers (2).
+This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: Swift (13), C/C++ headers (2).
 
 ## Repository Contents
 
@@ -62,11 +62,16 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 ## Testing and Verification
 
-Run the static baseline:
+Run the maintained baseline:
 
 ```bash
 make check
 ```
+
+When `swiftc` is available, every Make gate first compiles and executes the
+production restaurant-response policy against the same 12 status, MIME, and
+size boundaries maintained by the independent Python oracle. The legacy XCTest
+target remains template-only and is not treated as behavioral evidence.
 
 The static gate requires GNU Make, a POSIX shell, and Python 3. It uses the
 `python3` command by default; set `PYTHON=/path/to/python3` on the Make command
@@ -99,6 +104,8 @@ Missing or non-image response MIME types are cancelled before declared-length
 acceptance or body buffering.
 Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
 no larger than 1 MiB.
+The pure status/MIME/size decision is shared with the standalone executable
+Swift harness instead of being reimplemented only in Python.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the

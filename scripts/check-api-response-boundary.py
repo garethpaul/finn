@@ -3,15 +3,25 @@ import sys
 from pathlib import Path
 
 
-source = Path(sys.argv[1]).read_text(encoding="utf-8")
+if len(sys.argv) != 3:
+    raise SystemExit(
+        "usage: check-api-response-boundary.py "
+        "<RestaurantAPIResponsePolicy.swift> <API.swift>"
+    )
+
+policy = Path(sys.argv[1]).read_text(encoding="utf-8")
+api = Path(sys.argv[2]).read_text(encoding="utf-8")
+source = policy + "\n" + api
 
 required = [
     "let RestaurantAPIResponseMaxBytes = 1024 * 1024",
+    "let acceptsRestaurantAPIResponseValues: (Int?, String?, Int?) -> Bool",
+    "statusCode != 200",
+    'NSString(string: MIMEType).lowercaseString != "application/json"',
+    "dataLength >= 0 && dataLength <= RestaurantAPIResponseMaxBytes",
     "func acceptsRestaurantAPIResponse(response: NSURLResponse?, data: NSData?) -> Bool",
     "response as? NSHTTPURLResponse",
-    "httpResponse.statusCode != 200",
-    'response?.MIMEType?.lowercaseString != "application/json"',
-    "responseData.length <= RestaurantAPIResponseMaxBytes",
+    "acceptsRestaurantAPIResponseValues(statusCode, response?.MIMEType, data?.length)",
     ".response {",
     "let data = responseObject as? NSData",
     "error != nil || !acceptsRestaurantAPIResponse(response, data: data)",
@@ -24,9 +34,9 @@ for fragment in required:
 if ".responseJSON()" in source:
     raise SystemExit("Restaurant API responses must be validated before JSON parsing.")
 
-callback_start = source.find(".response {")
-callback_end = source.find("\n        }\n    }\n}", callback_start)
-callback = source[callback_start:callback_end]
+callback_start = api.find(".response {")
+callback_end = api.find("\n        }\n    }\n}", callback_start)
+callback = api[callback_start:callback_end]
 ordered = [
     "let data = responseObject as? NSData",
     "error != nil || !acceptsRestaurantAPIResponse(response, data: data)",
@@ -43,7 +53,7 @@ def accepts(status, mime_type, size):
         and mime_type is not None
         and mime_type.lower() == "application/json"
         and size is not None
-        and size <= 1024 * 1024
+        and 0 <= size <= 1024 * 1024
     )
 
 
@@ -61,6 +71,7 @@ rejected = [
     (200, None, 1),
     (200, "text/html", 1),
     (200, "application/json", None),
+    (200, "application/json", -1),
     (200, "application/json", 1024 * 1024 + 1),
 ]
 if not all(accepts(*case) for case in accepted):

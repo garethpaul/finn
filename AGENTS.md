@@ -29,13 +29,13 @@
 
 ## Coding conventions
 
-- Language mix noted in the README: Swift (11), C/C++ headers (2).
+- Language mix noted in the README: Swift (13), C/C++ headers (2).
 - Use the CocoaPods workspace when present; update `Podfile.lock` only with an intentional dependency change.
 - Preserve legacy Xcode project settings and signing assumptions unless the change is explicitly about modernization.
 
 ## Testing guidance
 
-- `FinnTests/FinnTests.swift` contains only template assertions; do not treat it as meaningful API, location, image-loading, or card-state coverage. The maintained regression gate is `make check`.
+- `FinnTests/FinnTests.swift` contains only template assertions; do not treat it as meaningful API, location, image-loading, or card-state coverage. `Tests/RestaurantAPIResponsePolicyTests/main.swift` is the standalone behavioral harness, and every Make gate compiles it with production policy when `swiftc` is available.
 - Start with the narrowest relevant test or Make target, then run `make check` before handing off if the change is not documentation-only.
 - Keep README verification notes in sync when commands, fixtures, or supported toolchains change.
 
@@ -57,6 +57,8 @@
 - Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.
 - Restaurant image redirects are rejected before redirected requests start.
 - Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body no larger than 1 MiB.
+- Keep that response policy in the app target and execute the same production
+  source from the standalone Swift harness.
 - Restaurant image responses must enforce the 5 MiB limit against declared and
   cumulative bytes before UIKit decoding, use a finite timeout, and clear
   request state without logging transport details.

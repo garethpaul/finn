@@ -61,6 +61,8 @@ Current baseline:
   length acceptance or body buffering.
 - Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
   no larger than 1 MiB.
+- The response-boundary predicate is shared by the app target and an executable
+  standalone Swift behavioral harness.
 
 Next priorities:
 

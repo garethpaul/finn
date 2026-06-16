@@ -62,6 +62,9 @@ Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.
 Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
 no larger than 1 MiB.
+The status/MIME/size predicate is compiled into the app target and executed by
+the standalone Swift harness, keeping the tested response decision tied to
+production source rather than a duplicated test implementation.
 
 Restaurant lookup coordinate parameters should be parsed completely and kept
 within latitude and longitude ranges before any API request is sent.
