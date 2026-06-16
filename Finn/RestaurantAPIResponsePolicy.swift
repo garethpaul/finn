@@ -10,7 +10,12 @@ let acceptsRestaurantAPIResponseValues: (Int?, String?, Int?) -> Bool = {
     }
 
     if let MIMEType = MIMEType {
-        if NSString(string: MIMEType).lowercaseString != "application/json" {
+#if EXECUTABLE_POLICY_TESTS
+        let normalizedMIMEType = MIMEType.lowercased()
+#else
+        let normalizedMIMEType = MIMEType.lowercaseString
+#endif
+        if normalizedMIMEType != "application/json" {
             return false
         }
     } else {

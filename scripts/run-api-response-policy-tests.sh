@@ -14,6 +14,7 @@ trap 'exit 130' 2
 trap 'exit 143' 15
 
 "$SWIFTC" \
+    -D EXECUTABLE_POLICY_TESTS \
     "$ROOT/Finn/RestaurantAPIResponsePolicy.swift" \
     "$ROOT/Tests/RestaurantAPIResponsePolicyTests/main.swift" \
     -o "$BUILD_DIR/restaurant-api-response-tests"

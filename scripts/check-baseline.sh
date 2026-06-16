@@ -116,6 +116,7 @@ if project.count("/* RestaurantAPIResponsePolicy.swift */") != 3:
 if makefile.count("scripts/run-api-response-policy-tests.sh") != 1:
     raise SystemExit("Every Make gate must invoke executable restaurant response tests once")
 runner_contract = (
+    "-D EXECUTABLE_POLICY_TESTS",
     "Finn/RestaurantAPIResponsePolicy.swift",
     "Tests/RestaurantAPIResponsePolicyTests/main.swift",
     'mktemp -d "${TMPDIR:-/tmp}/finn-api-response-tests.XXXXXX"',
