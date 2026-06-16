@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-16
+
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Added an
+  explicit interpreter override, actionable runtime diagnostics, and mandatory
+  plist parsing after the shared preflight.
+
 ## 2026-06-14
 
 - Required HTTP 200, `application/json`, and at most 1 MiB before restaurant API JSON parsing.

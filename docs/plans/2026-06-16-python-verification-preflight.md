@@ -1,6 +1,6 @@
 # Python Verification Preflight
 
-## Status: In Progress
+## Status: Completed
 
 ## Context
 
@@ -62,3 +62,35 @@ and is fully testable on the current host.
 The change is an offline static-gate improvement. Xcode, simulator, devices,
 location authorization, live restaurant requests, image rendering, card
 interaction, and external endpoint behavior are not executed or claimed.
+
+## Work Completed
+
+- Added a Make-level `PYTHON` command with a `python3` default and quoted
+  propagation into the maintenance checker.
+- Added missing-command and major-version preflights before any Python-backed
+  validation, with actionable diagnostics for each failure mode.
+- Routed all eight Python invocations through the preflighted interpreter and
+  removed the contradictory optional plist-parse branch.
+- Documented the GNU Make, POSIX shell, and Python 3 prerequisites and the
+  explicit compatible Python command override.
+- Added mutation-sensitive contracts for propagation, executable preflight
+  behavior, invocation ownership, mandatory plist parsing, documentation, and
+  this completed evidence record.
+
+## Verification Completed
+
+- POSIX shell syntax validation passed.
+- All four Make aliases passed from the repository root with Python 3.12.8.
+- `make check` passed from the repository root and external working directory.
+- The explicit compatible Python command override passed using the resolved
+  Python 3 executable path.
+- The missing-command and non-Python-3 preflights failed early with their
+  intended actionable diagnostics.
+- Nine isolated hostile mutations were rejected for the Make default,
+  propagation, command lookup, major-version comparison, Python-call routing,
+  false plist skip, prerequisite guidance, plan status, and override evidence.
+- Exact diff, generated-artifact, credential-like value, dependency drift,
+  conflict-marker, file-mode, and whitespace audits passed.
+- `xcodebuild` was unavailable on Linux; no Xcode, simulator, device, location,
+  restaurant API, image, card, or external endpoint behavior was executed or
+  claimed.

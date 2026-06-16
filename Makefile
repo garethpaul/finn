@@ -1,9 +1,10 @@
 .PHONY: build check lint test
 
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+PYTHON ?= python3
 
 check:
-	@"$(ROOT)/scripts/check-baseline.sh"
+	@PYTHON="$(PYTHON)" "$(ROOT)/scripts/check-baseline.sh"
 
 lint: check
 

@@ -22,6 +22,8 @@
 - Lint/static checks: `make lint`
 - Tests: `make test`
 - Build: `make build`
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Override the
+  interpreter command with `make PYTHON=/path/to/python3 check` when needed.
 - Local Apple development: `open Finn.xcworkspace`
 - If a command above skips because a platform toolchain is missing, verify on a machine with that SDK before claiming platform behavior is tested.
 

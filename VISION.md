@@ -25,6 +25,8 @@ Current baseline:
 
 - `scripts/check-baseline.sh` and `make check` verify the CocoaPods lockfile,
   workspace guidance, API configuration, and location guardrails.
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Its
+  interpreter command is explicit and fails fast when missing or incompatible.
 - GitHub Actions runs that baseline on macOS and parses the checked-in Xcode
   project without requiring generated CocoaPods files, private API settings, or
   persisted checkout credentials.

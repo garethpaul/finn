@@ -24,7 +24,20 @@ IMAGE_REDIRECT_PLAN="$ROOT_DIR/docs/plans/2026-06-14-image-redirect-rejection.md
 IMAGE_REDIRECT_CHECK="$ROOT_DIR/scripts/check-image-redirect-boundary.py"
 API_RESPONSE_PLAN="$ROOT_DIR/docs/plans/2026-06-14-api-response-boundary.md"
 API_RESPONSE_CHECK="$ROOT_DIR/scripts/check-api-response-boundary.py"
+PYTHON_PREFLIGHT_PLAN="$ROOT_DIR/docs/plans/2026-06-16-python-verification-preflight.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
+PYTHON=${PYTHON:-python3}
+
+if ! command -v "$PYTHON" >/dev/null 2>&1; then
+  printf '%s\n' "Python 3 command not found: $PYTHON (set PYTHON to a Python 3 executable)." >&2
+  exit 1
+fi
+
+python_major=$("$PYTHON" -c 'import sys; sys.stdout.write(str(sys.version_info[0]))' 2>/dev/null || true)
+if [ "$python_major" != "3" ]; then
+  printf '%s\n' "Verification requires Python 3: $PYTHON" >&2
+  exit 1
+fi
 
 require_file() {
   path=$1
@@ -73,13 +86,14 @@ for path in \
   "docs/plans/2026-06-13-location-independent-make.md" \
   "docs/plans/2026-06-14-image-redirect-rejection.md" \
   "docs/plans/2026-06-14-api-response-boundary.md" \
+  "docs/plans/2026-06-16-python-verification-preflight.md" \
   "scripts/check-image-redirect-boundary.py" \
   "scripts/check-api-response-boundary.py"; do
   require_file "$path"
 done
 
-python3 "$IMAGE_REDIRECT_CHECK" "$ROOT_DIR/Finn/Picture.swift" "$IMAGE_REDIRECT_PLAN"
-python3 "$API_RESPONSE_CHECK" "$ROOT_DIR/Finn/API.swift"
+"$PYTHON" "$IMAGE_REDIRECT_CHECK" "$ROOT_DIR/Finn/Picture.swift" "$IMAGE_REDIRECT_PLAN"
+"$PYTHON" "$API_RESPONSE_CHECK" "$ROOT_DIR/Finn/API.swift"
 
 if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
   ! grep -Fq "hostile mutations were rejected" "$API_RESPONSE_PLAN" ||
@@ -160,6 +174,33 @@ if ! grep -Fq "lint: check" "$ROOT_DIR/Makefile" ||
   exit 1
 fi
 
+if ! grep -Fq 'PYTHON ?= python3' "$ROOT_DIR/Makefile" ||
+  ! grep -Fq 'PYTHON="$(PYTHON)" "$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
+  printf '%s\n' "Makefile must propagate the configurable Python 3 command to the checker." >&2
+  exit 1
+fi
+
+python_preflight=$(sed -n '/^PYTHON=${PYTHON:-python3}$/,/^require_file()/p' "$ROOT_DIR/scripts/check-baseline.sh")
+for python_preflight_contract in \
+  'PYTHON=${PYTHON:-python3}' \
+  'command -v "$PYTHON"' \
+  'sys.stdout.write(str(sys.version_info[0]))' \
+  'if [ "$python_major" != "3" ]; then' \
+  'Python 3 command not found:' \
+  'Verification requires Python 3:'; do
+  if ! printf '%s\n' "$python_preflight" | grep -Fq "$python_preflight_contract"; then
+    printf '%s\n' "Python verification preflight contract is missing: $python_preflight_contract" >&2
+    exit 1
+  fi
+done
+
+if [ "$(grep -Ec '^"\$PYTHON" ' "$ROOT_DIR/scripts/check-baseline.sh")" -ne 8 ] ||
+  grep -Eq '^python3 ' "$ROOT_DIR/scripts/check-baseline.sh" ||
+  grep -Eq '^[[:space:]]*printf .*Skipping Info\.plist XML parse' "$ROOT_DIR/scripts/check-baseline.sh"; then
+  printf '%s\n' "Every Python-backed check must use the required preflighted interpreter." >&2
+  exit 1
+fi
+
 if ! grep -Fq "FinnAPIBaseURL" "$ROOT_DIR/Finn/Info.plist" ||
   ! grep -Fq '$(FINN_API_BASE_URL)' "$ROOT_DIR/Finn/Info.plist" ||
   grep -Fq "NSLocationAlwaysUsageDescription " "$ROOT_DIR/Finn/Info.plist"; then
@@ -167,16 +208,12 @@ if ! grep -Fq "FinnAPIBaseURL" "$ROOT_DIR/Finn/Info.plist" ||
   exit 1
 fi
 
-if command -v python3 >/dev/null 2>&1; then
-  python3 - "$ROOT_DIR/Finn/Info.plist" <<'PY'
+"$PYTHON" - "$ROOT_DIR/Finn/Info.plist" <<'PY'
 import sys
 import xml.etree.ElementTree as ET
 
 ET.parse(sys.argv[1])
 PY
-else
-  printf '%s\n' "Skipping Info.plist XML parse: python3 is not installed."
-fi
 
 api="$ROOT_DIR/Finn/API.swift"
 if ! grep -Fq "FinnAPIBaseURL" "$api" ||
@@ -217,7 +254,7 @@ if ! grep -Fq "let cleanLat = lat.stringByTrimmingCharactersInSet" "$api" ||
 fi
 
 view="$ROOT_DIR/Finn/ViewController.swift"
-python3 - "$view" <<'PY'
+"$PYTHON" - "$view" <<'PY'
 import sys
 from pathlib import Path
 
@@ -312,7 +349,7 @@ if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" 
   exit 1
 fi
 
-python3 - "$picture" "$picker" <<'PY'
+"$PYTHON" - "$picture" "$picker" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -592,7 +629,7 @@ if ! grep -Fq "status: completed" "$CI_PLAN" ||
   exit 1
 fi
 
-python3 - "$BRIDGING_HEADER_PLAN" <<'PY'
+"$PYTHON" - "$BRIDGING_HEADER_PLAN" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -619,7 +656,7 @@ if (
     )
 PY
 
-python3 - "$IMAGE_PAYLOAD_PLAN" <<'PY'
+"$PYTHON" - "$IMAGE_PAYLOAD_PLAN" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -640,7 +677,7 @@ if statuses != ["status: completed"] or any(item not in plan for item in require
     )
 PY
 
-python3 - "$STREAMING_IMAGE_PLAN" <<'PY'
+"$PYTHON" - "$STREAMING_IMAGE_PLAN" <<'PY'
 import re
 import sys
 from pathlib import Path
@@ -696,5 +733,24 @@ if ! grep -Fq "location updates start only after" "$ROOT_DIR/README.md" ||
   printf '%s\n' "Project docs must preserve the authorized location-start boundary." >&2
   exit 1
 fi
+
+for python_preflight_doc in README.md AGENTS.md VISION.md CHANGES.md; do
+  if ! grep -Fq "The static gate requires GNU Make, a POSIX shell, and Python 3." "$ROOT_DIR/$python_preflight_doc"; then
+    printf '%s\n' "$python_preflight_doc must document the Python verification prerequisite." >&2
+    exit 1
+  fi
+done
+
+for python_preflight_plan_contract in \
+  "## Status: Completed" \
+  "repository root and external working directory" \
+  "explicit compatible Python command override" \
+  "missing-command and non-Python-3 preflights" \
+  "hostile mutations were rejected"; do
+  if ! grep -Fq "$python_preflight_plan_contract" "$PYTHON_PREFLIGHT_PLAN"; then
+    printf '%s\n' "Python verification preflight plan must record completed evidence: $python_preflight_plan_contract" >&2
+    exit 1
+  fi
+done
 
 printf '%s\n' "finn maintenance baseline checks passed."
