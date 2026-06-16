@@ -69,7 +69,7 @@ make check
 ```
 
 When `swiftc` is available, every Make gate first compiles and executes the
-production restaurant-response policy against the same 12 status, MIME, and
+production restaurant-response policy against the same 13 status, MIME, and
 size boundaries maintained by the independent Python oracle. The legacy XCTest
 target remains template-only and is not treated as behavioral evidence.
 

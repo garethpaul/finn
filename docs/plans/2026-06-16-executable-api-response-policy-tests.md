@@ -21,7 +21,7 @@ live API, CocoaPods, or an Apple device.
 - Preserve NSURLResponse extraction and pre-parse delegation in `API.swift`.
 - Compile the production policy with a standalone Swift harness from every Make
   gate when `swiftc` is available.
-- Preserve the two accepted and ten rejected cases from the independent Python
+- Preserve the two accepted and eleven rejected cases from the independent Python
   oracle, including the exact 1 MiB boundary.
 - Keep the template XCTest target explicitly excluded from behavioral evidence.
 
@@ -43,9 +43,12 @@ live API, CocoaPods, or an Apple device.
 - The accepted response mutation failed after removing a valid boundary case.
 - The rejected response mutation failed after removing an invalid case.
 - The plan evidence mutation failed after removing completed verification text.
+- All ten targeted hostile mutations were rejected by the maintained gate.
+- Fake-compiler success, exit-7 failure, signal-143 cleanup, and temporary-build
+  cleanup probes passed for the standalone runner.
 - Shell and Python syntax, project references, executable modes, diff checks,
   artifact scans, and changed-line credential-pattern scans passed.
 - `swiftc` and Xcode are unavailable on this Linux host, so local gates verify
   deterministic source wiring and defer Swift execution to hosted macOS.
-- The hosted pull-request check is recorded against the exact pushed head in
-  the external engineering tracker.
+- The hosted pull-request check remains the pre-merge authority for executable
+  Swift evidence on the exact pushed head.

@@ -79,4 +79,4 @@ if not all(accepts(*case) for case in accepted):
 if any(accepts(*case) for case in rejected):
     raise SystemExit("Invalid restaurant API response boundaries must fail closed.")
 
-print("Restaurant API response boundary checks passed (12 cases).")
+print("Restaurant API response boundary checks passed (13 cases).")

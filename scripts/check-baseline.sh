@@ -139,7 +139,7 @@ test_contract = (
     'false, "oversize response"',
 )
 if any(tests.count(fragment) != 1 for fragment in test_contract):
-    raise SystemExit("Executable restaurant response tests must preserve all 12 boundary cases")
+    raise SystemExit("Executable restaurant response tests must preserve all 13 boundary cases")
 PY
 
 if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
