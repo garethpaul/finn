@@ -50,5 +50,7 @@ live API, CocoaPods, or an Apple device.
   artifact scans, and changed-line credential-pattern scans passed.
 - `swiftc` and Xcode are unavailable on this Linux host, so local gates verify
   deterministic source wiring and defer Swift execution to hosted macOS.
-- The hosted pull-request check remains the pre-merge authority for executable
-  Swift evidence on the exact pushed head.
+- On implementation head `253e1ac007a8742f8dce578b0ece01d6529cb561`, hosted
+  push run `27643079424` and hosted pull-request check run `27643081915` passed.
+  Both logs recorded the production Swift harness, all 13 response boundaries,
+  and the maintained baseline passing.
