@@ -167,7 +167,9 @@ required = (
     "accepted response mutation failed",
     "rejected response mutation failed",
     "plan evidence mutation failed",
-    "hosted pull-request check",
+    "implementation head `253e1ac007a8742f8dce578b0ece01d6529cb561`",
+    "push run `27643079424`",
+    "pull-request check run `27643081915`",
 )
 if (
     re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE) != ["status: completed"]
