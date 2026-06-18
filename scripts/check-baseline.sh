@@ -25,6 +25,7 @@ IMAGE_REDIRECT_CHECK="$ROOT_DIR/scripts/check-image-redirect-boundary.py"
 API_RESPONSE_PLAN="$ROOT_DIR/docs/plans/2026-06-14-api-response-boundary.md"
 API_RESPONSE_CHECK="$ROOT_DIR/scripts/check-api-response-boundary.py"
 API_RESPONSE_EXECUTION_PLAN="$ROOT_DIR/docs/plans/2026-06-16-executable-api-response-policy-tests.md"
+API_RESPONSE_SIGNAL_PLAN="$ROOT_DIR/docs/plans/2026-06-18-finn-api-response-harness-signal-cleanup.md"
 PYTHON_PREFLIGHT_PLAN="$ROOT_DIR/docs/plans/2026-06-16-python-verification-preflight.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 PYTHON=${PYTHON:-python3}
@@ -89,6 +90,7 @@ for path in \
   "docs/plans/2026-06-14-image-redirect-rejection.md" \
   "docs/plans/2026-06-14-api-response-boundary.md" \
   "docs/plans/2026-06-16-executable-api-response-policy-tests.md" \
+  "docs/plans/2026-06-18-finn-api-response-harness-signal-cleanup.md" \
   "docs/plans/2026-06-16-python-verification-preflight.md" \
   "scripts/check-image-redirect-boundary.py" \
   "scripts/check-api-response-boundary.py" \
@@ -105,6 +107,7 @@ done
 "$PYTHON" - "$ROOT_DIR/Finn.xcodeproj/project.pbxproj" "$ROOT_DIR/Makefile" \
   "$ROOT_DIR/scripts/run-api-response-policy-tests.sh" \
   "$ROOT_DIR/Tests/RestaurantAPIResponsePolicyTests/main.swift" <<'PY'
+import re
 import sys
 from pathlib import Path
 
@@ -124,6 +127,20 @@ runner_contract = (
 )
 if any(runner.count(fragment) != 1 for fragment in runner_contract):
     raise SystemExit("Restaurant response runner must compile production policy with bounded cleanup")
+signal_handler = re.compile(
+    r'''handle_signal\(\) \{\s*'''
+    r'''status=\$1\s*'''
+    r'''trap - 0 1 2 15\s*'''
+    r'''cleanup\s*'''
+    r'''exit "\$status"\s*'''
+    r'''\}'''
+)
+if not signal_handler.search(runner):
+    raise SystemExit("Restaurant response runner signals must clean temporary output before exiting")
+for signal, status in ((1, 129), (2, 130), (15, 143)):
+    binding = f"trap 'handle_signal {status}' {signal}"
+    if runner.count(binding) != 1:
+        raise SystemExit(f"Restaurant response runner must retain signal binding: {binding}")
 test_contract = (
     'true, "empty JSON response"',
     'true, "case-insensitive MIME and size boundary"',
@@ -142,6 +159,16 @@ test_contract = (
 if any(tests.count(fragment) != 1 for fragment in test_contract):
     raise SystemExit("Executable restaurant response tests must preserve all 13 boundary cases")
 PY
+
+for signal_cleanup_plan_contract in \
+  "status: planned" \
+  'exit-only signal traps leave `finn-api-response-tests.*` behind' \
+  "success, compiler failure, and bounded termination"; do
+  if ! grep -Fq "$signal_cleanup_plan_contract" "$API_RESPONSE_SIGNAL_PLAN"; then
+    printf '%s\n' "Restaurant response harness signal-cleanup plan must retain evidence: $signal_cleanup_plan_contract" >&2
+    exit 1
+  fi
+done
 
 if ! grep -Fq "status: completed" "$API_RESPONSE_PLAN" ||
   ! grep -Fq "hostile mutations were rejected" "$API_RESPONSE_PLAN" ||
