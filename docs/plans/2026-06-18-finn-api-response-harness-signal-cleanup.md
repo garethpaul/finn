@@ -2,13 +2,13 @@
 title: Finn API Response Harness Signal Cleanup
 type: reliability
 date: 2026-06-18
-status: planned
+status: completed
 execution: code
 ---
 
 # Finn API Response Harness Signal Cleanup
 
-## Status: Planned
+## Status: Completed
 
 ## Summary
 
@@ -30,14 +30,25 @@ its exit-only signal traps leave `finn-api-response-tests.*` behind after
 - Verify success, compiler failure, and bounded termination with isolated fake
   compilers and temporary directories.
 
-## Verification Plan
+## Verification Completed
 
-- Run `sh -n` on the runner and baseline gate.
-- Run all Make gates from the repository and `make check` from an external
-  directory.
-- Exercise success, compiler-failure, and `TERM` cleanup paths with bounded
-  fake compilers.
-- Mutate the direct cleanup call and a signal binding and prove the baseline
-  rejects both changes.
-- Commit and push the implementation before recording exact-head hosted
-  evidence and changing this plan to completed.
+- `sh -n` passed for the runner and baseline gate.
+- `make check`, `make lint`, `make test`, and `make build` passed from the
+  repository, and absolute-Makefile `make check` passed from `/tmp`.
+- Isolated fake compilers proved success cleanup, compiler-failure cleanup with
+  status 42, and bounded `TERM` cleanup with no residual temporary directory.
+- Mutations removing the direct cleanup call and restoring the exit-only
+  `TERM` binding were rejected by the baseline gate.
+- The existing image-redirect and 13-case restaurant response-policy checks
+  remained green.
+- Diff, executable-mode, worktree, generated-artifact, and high-confidence
+  credential-pattern audits passed.
+- The implementation was committed and pushed as
+  `12144a7220b4f46b820bc29e474159f6271f4f9e`.
+- Push run `27747221507` and pull-request run `27747225845` completed
+  successfully on that exact head, including the hosted Swift harness and
+  Xcode project checks. PR #12 remained open and mergeable, with zero open
+  branch code-scanning or Dependabot alerts.
+- Linux still cannot execute Swift, Xcode, CocoaPods, CoreLocation, provider
+  requests, image rendering, or device UI; those platform boundaries remain
+  outside this deterministic runner fix.

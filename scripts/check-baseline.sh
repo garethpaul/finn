@@ -161,9 +161,13 @@ if any(tests.count(fragment) != 1 for fragment in test_contract):
 PY
 
 for signal_cleanup_plan_contract in \
-  "status: planned" \
+  "status: completed" \
   'exit-only signal traps leave `finn-api-response-tests.*` behind' \
-  "success, compiler failure, and bounded termination"; do
+  "## Verification Completed" \
+  "12144a7220b4f46b820bc29e474159f6271f4f9e" \
+  'Push run `27747221507` and pull-request run `27747225845` completed' \
+  "status 42" \
+  '`TERM` binding were rejected'; do
   if ! grep -Fq "$signal_cleanup_plan_contract" "$API_RESPONSE_SIGNAL_PLAN"; then
     printf '%s\n' "Restaurant response harness signal-cleanup plan must retain evidence: $signal_cleanup_plan_contract" >&2
     exit 1
