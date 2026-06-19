@@ -85,7 +85,9 @@ The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
 card queue handling. It also verifies that location updates start only after
 when-in-use or always authorization is granted, stop after a usable callback
-location or failure, and do not log raw error details. The API endpoint guard
+location or failure, reject stale or excessively inaccurate fixes, cancel
+pending work when the screen disappears, and do not log raw error details.
+Coordinates remain rounded to two decimals before transport. The API endpoint guard
 parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
 fragments before sending coordinates. Coordinate parameters are trimmed,
@@ -94,16 +96,22 @@ requests. API restaurant fields are trimmed,
 and blank restaurant names or image URLs are skipped before card creation.
 Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
-Restaurant image downloads inspect parsed URL parts, require HTTPS with a host,
-and reject embedded username/password before creating image requests.
+Restaurant image downloads inspect parsed URL parts, require HTTPS with a public
+host, and reject embedded username/password, localhost, private, link-local,
+multicast, and reserved IP targets before creating image requests.
 Image downloads use incremental `NSURLConnection` delegate callbacks, reject a
 declared or cumulative response over 5 MiB before UIKit decoding, and use a
 15-second request timeout. Picker cards retain the active loader, cancel it when
 released, and avoid a strong image-callback cycle.
 Missing or non-image response MIME types are cancelled before declared-length
 acceptance or body buffering.
-Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
-no larger than 1 MiB.
+JPEG, PNG, and GIF dimensions are inspected before UIKit decoding; either
+dimension may be at most 4096 pixels and the total may be at most 16,777,216
+pixels. Restaurant API JSON parsing requires HTTP 200, `application/json`, and
+a body no larger than 1 MiB. Transport rejects redirects and enforces that limit
+while bytes arrive rather than after a complete Alamofire buffer. Parsing also
+caps accepted restaurants at 100, names at 200 characters, and image URLs at
+2048 characters.
 The pure status/MIME/size decision is shared with the standalone executable
 Swift harness instead of being reimplemented only in Python.
 The `make lint`, `make test`, and `make build` aliases run the same static
@@ -140,6 +148,13 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Restaurant image responses should enforce the 5 MiB limit while bytes arrive,
   not only after a complete response has been buffered.
 - Restaurant image redirects are rejected before a redirected request can load.
+- Image hosts must not be localhost or literal private/link-local/reserved
+  addresses. DNS resolution is still a deployment trust boundary.
+- Image dimensions are bounded before UIKit decoding to reduce compressed
+  pixel-bomb memory risk.
+- Location fixes must be finite, in range, no more than 30 seconds old, and no
+  less accurate than 1500 meters; two-decimal coordinates are sent only while
+  the restaurant screen owns the lookup.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
 - Picker views should not force-unwrap restaurant state when rendering names or

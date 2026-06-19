@@ -25,6 +25,8 @@
 		FD0F40A21B066BFF00B6C423 /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A11B066BFF00B6C423 /* AppInfo.swift */; };
 		FD0F40A41B066C1E00B6C423 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A31B066C1E00B6C423 /* API.swift */; };
 		A16061611B066C1E00B6C423 /* RestaurantAPIResponsePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16061621B066C1E00B6C423 /* RestaurantAPIResponsePolicy.swift */; };
+		A16061631B066C1E00B6C423 /* LocationLookupPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16061641B066C1E00B6C423 /* LocationLookupPolicy.swift */; };
+		A16061651B066C1E00B6C423 /* RemoteImagePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16061661B066C1E00B6C423 /* RemoteImagePolicy.swift */; };
 		FD0F40A71B066E4400B6C423 /* Store.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FD0F40A51B066E4400B6C423 /* Store.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +68,8 @@
 		FD0F40A11B066BFF00B6C423 /* AppInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
 		FD0F40A31B066C1E00B6C423 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		A16061621B066C1E00B6C423 /* RestaurantAPIResponsePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantAPIResponsePolicy.swift; sourceTree = "<group>"; };
+		A16061641B066C1E00B6C423 /* LocationLookupPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationLookupPolicy.swift; sourceTree = "<group>"; };
+		A16061661B066C1E00B6C423 /* RemoteImagePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImagePolicy.swift; sourceTree = "<group>"; };
 		FD0F40A61B066E4400B6C423 /* Store.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Store.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -208,6 +212,8 @@
 				FD0F40A11B066BFF00B6C423 /* AppInfo.swift */,
 				FD0F40A31B066C1E00B6C423 /* API.swift */,
 				A16061621B066C1E00B6C423 /* RestaurantAPIResponsePolicy.swift */,
+				A16061641B066C1E00B6C423 /* LocationLookupPolicy.swift */,
+				A16061661B066C1E00B6C423 /* RemoteImagePolicy.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -422,6 +428,8 @@
 				FD0F409B1B066AEB00B6C423 /* Resizer.swift in Sources */,
 				FD0F40A41B066C1E00B6C423 /* API.swift in Sources */,
 				A16061611B066C1E00B6C423 /* RestaurantAPIResponsePolicy.swift in Sources */,
+				A16061631B066C1E00B6C423 /* LocationLookupPolicy.swift in Sources */,
+				A16061651B066C1E00B6C423 /* RemoteImagePolicy.swift in Sources */,
 				FD0F40A71B066E4400B6C423 /* Store.xcdatamodeld in Sources */,
 				FD0F409E1B066B5400B6C423 /* FinnCell.swift in Sources */,
 				FD0F40941B06542F00B6C423 /* Hex.swift in Sources */,

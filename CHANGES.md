@@ -1,5 +1,20 @@
 # Changes
 
+## 2026-06-19
+
+- Replaced the fully buffered restaurant API callback with an owned streaming
+  connection that rejects redirects, invalid status/media type, declared bodies
+  over 1 MiB, and cumulative overflow before append.
+- Rejected stale, future, invalid, and excessively inaccurate location fixes;
+  stopped location and API work when the restaurant screen disappears; and
+  ignored stale completions through request generations.
+- Rejected localhost, private, link-local, multicast, and reserved IP image
+  targets, limited image media types, and inspected dimensions before UIKit
+  decoding to block compressed pixel bombs.
+- Bounded parsed restaurant count and field lengths, retained two-decimal
+  coordinate precision, and added native policy, fake-network, static, and
+  seven hostile mutation checks.
+
 ## 2026-06-16
 
 - Extracted the restaurant response status/MIME/size predicate into app

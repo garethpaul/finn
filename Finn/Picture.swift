@@ -1,9 +1,10 @@
 import Foundation
 import UIKit
+import ImageIO
 
 class Picture: NSObject, NSURLConnectionDataDelegate {
 
-    private let maxImageDataBytes = 5 * 1024 * 1024
+    private let maxImageDataBytes = RestaurantImageMaxDataBytes
     private let requestTimeout: NSTimeInterval = 15
     private var activeConnection: NSURLConnection?
     private var receivedData = NSMutableData()
@@ -13,23 +14,7 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
     {
         cancel()
 
-        if let scheme = url.scheme {
-            if scheme != "https" {
-                return
-            }
-        } else {
-            return
-        }
-
-        if let host = url.host {
-            if host.isEmpty {
-                return
-            }
-        } else {
-            return
-        }
-
-        if url.user != nil || url.password != nil {
+        if !isAllowedRestaurantImageURL(url) {
             return
         }
 
@@ -71,6 +56,7 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
         }
 
         receivedData.length = 0
+        responseMIMEType = response?.MIMEType
         if !isImageResponse(response) {
             connection.cancel()
             resetState()
@@ -104,7 +90,8 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
         }
 
         let handler = completionHandler
-        if receivedData.length > 0, let image = UIImage(data: receivedData) {
+        if receivedData.length > 0 && acceptsRestaurantImageMetadata(responseMIMEType, data: receivedData),
+            let image = UIImage(data: receivedData) {
             resetState()
             handler?(image: image, nil)
         } else {
@@ -127,8 +114,26 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
     }
 
     private func isImageResponse(response: NSURLResponse?) -> Bool {
-        if let mimeType = response?.MIMEType {
-            return mimeType.lowercaseString.hasPrefix("image/")
+        var statusCode: Int?
+        if let httpResponse = response as? NSHTTPURLResponse {
+            statusCode = httpResponse.statusCode
+        }
+
+        return acceptsRestaurantImageResponseValues(
+            statusCode,
+            response?.MIMEType,
+            response?.expectedContentLength ?? -2
+        )
+    }
+
+    private var responseMIMEType: String?
+
+    private func acceptsRestaurantImageMetadata(MIMEType: String?, data: NSData) -> Bool {
+        if let source = CGImageSourceCreateWithData(data, nil),
+            properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? NSDictionary,
+            width = properties.objectForKey(kCGImagePropertyPixelWidth) as? NSNumber,
+            height = properties.objectForKey(kCGImagePropertyPixelHeight) as? NSNumber {
+            return acceptsRestaurantImageMetadataValues(MIMEType, width.integerValue, height.integerValue)
         }
 
         return false
@@ -137,6 +142,7 @@ class Picture: NSObject, NSURLConnectionDataDelegate {
     private func resetState() {
         activeConnection = nil
         completionHandler = nil
+        responseMIMEType = nil
         receivedData.length = 0
     }
 

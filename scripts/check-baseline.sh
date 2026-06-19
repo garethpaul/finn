@@ -357,7 +357,8 @@ if ! grep -Fq "let cleanLat = lat.stringByTrimmingCharactersInSet" "$api" ||
   ! grep -Fq "!scanner.scanDouble(&parsedValue) || !scanner.atEnd" "$api" ||
   ! grep -Fq "coordinateInRange(cleanLat, minimum: -90, maximum: 90)" "$api" ||
   ! grep -Fq "coordinateInRange(cleanLon, minimum: -180, maximum: 180)" "$api" ||
-  ! grep -Fq 'parameters: ["lat": cleanLat, "lon": cleanLon]' "$api"; then
+  ! grep -Fq 'NSURLQueryItem(name: "lat", value: cleanLat)' "$api" ||
+  ! grep -Fq 'NSURLQueryItem(name: "lon", value: cleanLon)' "$api"; then
   printf '%s\n' "API client must parse and range-check coordinate parameters before requests." >&2
   exit 1
 fi
@@ -381,15 +382,10 @@ callback = source.split("    func locationManager(manager: CLLocationManager!, d
 contracts = (
     "authorizationStatus == CLAuthorizationStatus.NotDetermined",
     "locationManager.requestWhenInUseAuthorization()",
-    "locationAuthorizationAllowsUpdates(authorizationStatus)",
-    "locationManager.startUpdatingLocation()",
 )
 if any(view_load.count(contract) != 1 for contract in contracts):
     raise SystemExit("Initial location updates must remain authorization-gated.")
-if not all(
-    view_load.index(first) < view_load.index(second)
-    for first, second in zip(contracts, contracts[1:])
-):
+if view_load.index(contracts[0]) > view_load.index(contracts[1]):
     raise SystemExit("Authorization checks must precede the initial location start.")
 for contract in (
     "status == CLAuthorizationStatus.AuthorizedWhenInUse",
@@ -414,10 +410,13 @@ if grep -Fq "println(lat)" "$view" ||
   grep -Fq "Restaurant skipped!" "$view" ||
   ! grep -Fq "if locations == nil || locations.count == 0" "$view" ||
   ! grep -Fq "as? CLLocation" "$view" ||
+  ! grep -Fq "acceptsRestaurantLocation(location)" "$view" ||
+  ! grep -Fq "lookupGeneration += 1" "$view" ||
+  ! grep -Fq "api.cancel()" "$view" ||
   ! grep -Fq "location.coordinate" "$view" ||
   grep -Fq "manager.location.coordinate" "$view" ||
   ! grep -Fq "manager.stopUpdatingLocation()" "$view" ||
-  ! grep -Fq "self.restaurants.count < 2" "$view" ||
+  ! grep -Fq "strongSelf.restaurants.count < 2" "$view" ||
   grep -Eq '^[[:space:]]*createRestaurantView\(bottomCardViewFrame\(\), res: self\.restaurants\.removeAtIndex\(0\)\)' "$view"; then
   printf '%s\n' "View controller must avoid raw location logs, use callback locations, stop updates, and guard card removals." >&2
   exit 1
@@ -431,16 +430,12 @@ if grep -Fq "NSURL(string: url_string)!" "$ROOT_DIR/Finn/FinnPickerView.swift" |
   ! grep -Fq "if let url = NSURL(string: url_string)" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   ! grep -Fq "if let restaurant = restaurant" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
   ! grep -Fq "nameLabel.text = restaurant.name" "$ROOT_DIR/Finn/FinnPickerView.swift" ||
-  ! grep -Fq "if let scheme = url.scheme" "$picture" ||
-  ! grep -Fq 'scheme != "https"' "$picture" ||
-  ! grep -Fq "if let host = url.host" "$picture" ||
-  ! grep -Fq "host.isEmpty" "$picture" ||
-  ! grep -Fq "url.user != nil || url.password != nil" "$picture"; then
+  ! grep -Fq "isAllowedRestaurantImageURL(url)" "$picture"; then
   printf '%s\n' "Image loading and picker rendering must guard invalid URLs, missing restaurants, and failed image decoding." >&2
   exit 1
 fi
 
-if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" -ne 1 ] ||
+if [ "$(grep -Fc "private let maxImageDataBytes = RestaurantImageMaxDataBytes" "$picture")" -ne 1 ] ||
   [ "$(grep -Fc "private let requestTimeout: NSTimeInterval = 15" "$picture")" -ne 1 ] ||
   ! grep -Fq "class Picture: NSObject, NSURLConnectionDataDelegate" "$picture" ||
   grep -Fq "sendAsynchronousRequest" "$picture" ||
@@ -449,7 +444,9 @@ if [ "$(grep -Fc "private let maxImageDataBytes = 5 * 1024 * 1024" "$picture")" 
   ! grep -Fq "receivedData.appendData(data)" "$picture" ||
   ! grep -Fq "connectionDidFinishLoading" "$picture" ||
   ! grep -Fq "private func isImageResponse(response: NSURLResponse?) -> Bool" "$picture" ||
-  ! grep -Fq 'mimeType.lowercaseString.hasPrefix("image/")' "$picture" ||
+  ! grep -Fq "acceptsRestaurantImageResponseValues(" "$picture" ||
+  ! grep -Fq "CGImageSourceCreateWithData" "$picture" ||
+  ! grep -Fq "acceptsRestaurantImageMetadata(responseMIMEType, data: receivedData)" "$picture" ||
   ! grep -Fq "private let picture = Picture()" "$picker" ||
   ! grep -Fq "[weak self]" "$picker" ||
   ! grep -Fq "picture.cancel()" "$picker" ||
@@ -466,7 +463,7 @@ from pathlib import Path
 source = Path(sys.argv[1]).read_text()
 picker = Path(sys.argv[2]).read_text()
 limits = re.findall(r"private let maxImageDataBytes = ([^\n]+)", source)
-if limits != ["5 * 1024 * 1024"]:
+if limits != ["RestaurantImageMaxDataBytes"]:
     raise SystemExit("Picture must define one exact 5 MiB image-data limit.")
 
 def section(start, end):
@@ -506,11 +503,11 @@ if source.count("private func isImageResponse(response: NSURLResponse?) -> Bool"
 ordered(
     media_helper,
     (
+        "acceptsRestaurantImageResponseValues",
         "response?.MIMEType",
-        'mimeType.lowercaseString.hasPrefix("image/")',
-        "return false",
+        "response?.expectedContentLength",
     ),
-    "Missing and non-image MIME types must fail closed.",
+    "Image status, media type, and declared length must fail closed.",
 )
 
 response_reset = response.find("receivedData.length = 0")
@@ -554,6 +551,7 @@ ordered(
     finish,
     (
         "receivedData.length > 0",
+        "acceptsRestaurantImageMetadata(responseMIMEType, data: receivedData)",
         "UIImage(data: receivedData)",
         "resetState()",
         "handler?(image: image, nil)",

@@ -24,6 +24,8 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     
     
     let locationManager = CLLocationManager()
+    private let api = APIClient()
+    private var lookupGeneration = 0
 
     // Set the button details
     let buttonDiameter: CGFloat = 80
@@ -56,8 +58,6 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
         let authorizationStatus = CLLocationManager.authorizationStatus()
         if authorizationStatus == CLAuthorizationStatus.NotDetermined {
             locationManager.requestWhenInUseAuthorization()
-        } else if CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(authorizationStatus) {
-            locationManager.startUpdatingLocation()
         }
         
 
@@ -86,11 +86,21 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     }
 
     func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(status) {
+        if self.view.window != nil && CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(status) {
             manager.startUpdatingLocation()
         } else {
             manager.stopUpdatingLocation()
         }
+    }
+
+    func acceptsRestaurantLocation(location: CLLocation) -> Bool {
+        let age = NSDate().timeIntervalSinceDate(location.timestamp)
+        return acceptsRestaurantLocationValues(
+            location.coordinate.latitude,
+            location.coordinate.longitude,
+            location.horizontalAccuracy,
+            age
+        )
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
@@ -98,38 +108,31 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
             return
         }
 
-        if let location = locations[locations.count - 1] as? CLLocation {
+        if let location = locations[locations.count - 1] as? CLLocation where acceptsRestaurantLocation(location) {
             manager.stopUpdatingLocation()
-            var locValue : CLLocationCoordinate2D = location.coordinate
-            var lat = locValue.latitude.format(".2")
-            var lon = locValue.longitude.format(".2")
+            let locValue : CLLocationCoordinate2D = location.coordinate
+            let lat = locValue.latitude.format(".2")
+            let lon = locValue.longitude.format(".2")
+            lookupGeneration += 1
+            let generation = lookupGeneration
 
-            // Fetch some tweets/Restaurants
-            let api = APIClient()
             api.getRestaurant(lat, lon: lon) {(fetchedRestaurants: Array<Restaurant>) in
+                dispatch_async(dispatch_get_main_queue()) { [weak self] in
+                    if let strongSelf = self where generation == strongSelf.lookupGeneration && strongSelf.view.window != nil {
+                        strongSelf.restaurants = fetchedRestaurants
+                        if strongSelf.restaurants.count < 2 {
+                            return
+                        }
 
-                // store the Restaurants in an array
-                self.restaurants = fetchedRestaurants
-
-                if self.restaurants.count < 2 {
-                    return
+                        strongSelf.topCardView = strongSelf.createRestaurantView(strongSelf.topCardViewFrame(), res: strongSelf.restaurants.removeAtIndex(0))
+                        strongSelf.view.addSubview(strongSelf.topCardView)
+                        strongSelf.bottomCardView = strongSelf.createRestaurantView(strongSelf.bottomCardViewFrame(), res: strongSelf.restaurants.removeAtIndex(0))
+                        strongSelf.view.insertSubview(strongSelf.bottomCardView, belowSubview: strongSelf.topCardView)
+                        strongSelf.constructBackground()
+                        strongSelf.constructNopeButton()
+                        strongSelf.constructLikeButton()
+                    }
                 }
-
-                // Setup initial card views
-                self.topCardView = self.createRestaurantView(self.topCardViewFrame(), res: self.restaurants.removeAtIndex(0))
-
-                // Append the card to the view
-                self.view.addSubview(self.topCardView)
-
-                // Append the "bottom" card under the top card
-                self.bottomCardView = self.createRestaurantView(self.bottomCardViewFrame(), res: self.restaurants.removeAtIndex(0))
-                self.view.insertSubview(self.bottomCardView, belowSubview: self.topCardView)
-
-                // constructors see functions below...
-                self.constructBackground()
-                self.constructNopeButton()
-                self.constructLikeButton()
-
             }
         }
     }
@@ -143,11 +146,23 @@ class ViewController: UIViewController, MDCSwipeToChooseDelegate, CLLocationMana
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
+        let authorizationStatus = CLLocationManager.authorizationStatus()
+        if CLLocationManager.locationServicesEnabled() && locationAuthorizationAllowsUpdates(authorizationStatus) {
+            locationManager.startUpdatingLocation()
+        }
+
         // Animate the logo when the view appears.
         UIView.animateWithDuration(0.6, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.8, options: .CurveEaseInOut, animations: { () -> Void in
             // Place the frame at the correct origin position.
             self.lView.frame.origin.y = 33
             }, completion: nil)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        lookupGeneration += 1
+        locationManager.stopUpdatingLocation()
+        api.cancel()
     }
 
     func view(view: UIView!, wasChosenWithDirection direction: MDCSwipeDirection) {

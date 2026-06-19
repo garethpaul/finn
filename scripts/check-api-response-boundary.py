@@ -15,71 +15,68 @@ source = policy + "\n" + api
 
 required = [
     "let RestaurantAPIResponseMaxBytes = 1024 * 1024",
-    "let acceptsRestaurantAPIResponseValues: (Int?, String?, Int?) -> Bool",
-    "statusCode != 200",
-    "#if EXECUTABLE_POLICY_TESTS",
-    "let normalizedMIMEType = MIMEType.lowercased()",
-    "let normalizedMIMEType = MIMEType.lowercaseString",
-    'normalizedMIMEType != "application/json"',
-    "dataLength >= 0 && dataLength <= RestaurantAPIResponseMaxBytes",
-    "func acceptsRestaurantAPIResponse(response: NSURLResponse?, data: NSData?) -> Bool",
-    "response as? NSHTTPURLResponse",
-    "acceptsRestaurantAPIResponseValues(statusCode, response?.MIMEType, data?.length)",
-    ".response {",
-    "let data = responseObject as? NSData",
-    "error != nil || !acceptsRestaurantAPIResponse(response, data: data)",
-    "NSJSONSerialization.JSONObjectWithData(responseData",
+    "let acceptsRestaurantAPIResponseHeadersValues: (Int?, String?, Int64) -> Bool",
+    "let canAppendRestaurantAPIBytes: (Int, Int) -> Bool",
+    'normalizedRestaurantAPIMIMEType(MIMEType) == "application/json"',
+    "class APIClient: NSObject, NSURLConnectionDataDelegate",
+    "func acceptsRestaurantAPIResponseHeaders(response: NSURLResponse?) -> Bool",
+    "acceptsRestaurantAPIResponseHeadersValues(statusCode, response?.MIMEType",
+    "func connection(connection: NSURLConnection!, didReceiveResponse response: NSURLResponse!)",
+    "if !acceptsRestaurantAPIResponseHeaders(response)",
+    "func connection(connection: NSURLConnection!, didReceiveData data: NSData!)",
+    "if !canAppendRestaurantAPIBytes(receivedData.length, data.length)",
+    "receivedData.appendData(data)",
+    "func connectionDidFinishLoading(connection: NSURLConnection!)",
+    "finish(parseRestaurants(receivedData))",
+    "NSJSONSerialization.JSONObjectWithData(data",
 ]
 for fragment in required:
     if fragment not in source:
         raise SystemExit("Restaurant API response boundary missing: " + fragment)
 
-if ".responseJSON()" in source:
-    raise SystemExit("Restaurant API responses must be validated before JSON parsing.")
+for forbidden in (".responseJSON()", ".response {", "responseObject as? NSData"):
+    if forbidden in api:
+        raise SystemExit("Restaurant API responses must stream through the bounded delegate path.")
 
-callback_start = api.find(".response {")
-callback_end = api.find("\n        }\n    }\n}", callback_start)
-callback = api[callback_start:callback_end]
-ordered = [
-    "let data = responseObject as? NSData",
-    "error != nil || !acceptsRestaurantAPIResponse(response, data: data)",
-    "NSJSONSerialization.JSONObjectWithData(responseData",
-]
-positions = [callback.find(fragment) for fragment in ordered]
-if -1 in positions or positions != sorted(positions):
-    raise SystemExit("Transport and response bounds must run before restaurant JSON parsing.")
+response = api.split(
+    "func connection(connection: NSURLConnection!, didReceiveResponse response: NSURLResponse!)",
+    1,
+)[1].split(
+    "func connection(connection: NSURLConnection!, didReceiveData data: NSData!)",
+    1,
+)[0]
+data = api.split(
+    "func connection(connection: NSURLConnection!, didReceiveData data: NSData!)",
+    1,
+)[1].split("func connectionDidFinishLoading", 1)[0]
+if response.index("acceptsRestaurantAPIResponseHeaders(response)") > response.index("finish([])"):
+    raise SystemExit("Restaurant response headers must be checked before completion.")
+if data.index("canAppendRestaurantAPIBytes") > data.index("receivedData.appendData(data)"):
+    raise SystemExit("Restaurant response bytes must be bounded before append.")
 
 
-def accepts(status, mime_type, size):
-    return (
-        status == 200
-        and mime_type is not None
-        and mime_type.lower() == "application/json"
-        and size is not None
-        and 0 <= size <= 1024 * 1024
-    )
+def accepts_headers(status, mime_type, declared):
+    base_type = mime_type.split(";", 1)[0].strip().lower() if mime_type else None
+    return status == 200 and base_type == "application/json" and -1 <= declared <= 1024 * 1024
 
 
 accepted = [
-    (200, "application/json", 0),
-    (200, "APPLICATION/JSON", 1024 * 1024),
+    (200, "application/json", -1),
+    (200, "APPLICATION/JSON; charset=utf-8", 1024 * 1024),
 ]
 rejected = [
     (None, "application/json", 1),
     (201, "application/json", 1),
-    (204, "application/json", 0),
     (302, "application/json", 1),
-    (400, "application/json", 1),
     (500, "application/json", 1),
     (200, None, 1),
     (200, "text/html", 1),
-    (200, "application/json", None),
-    (200, "application/json", -1),
+    (200, "application/json", -2),
     (200, "application/json", 1024 * 1024 + 1),
 ]
-if not all(accepts(*case) for case in accepted):
-    raise SystemExit("Valid restaurant API response boundaries must remain accepted.")
-if any(accepts(*case) for case in rejected):
-    raise SystemExit("Invalid restaurant API response boundaries must fail closed.")
+if not all(accepts_headers(*case) for case in accepted):
+    raise SystemExit("Valid restaurant API response headers must remain accepted.")
+if any(accepts_headers(*case) for case in rejected):
+    raise SystemExit("Invalid restaurant API response headers must fail closed.")
 
-print("Restaurant API response boundary checks passed (13 cases).")
+print("Restaurant API streaming boundary checks passed (11 cases).")

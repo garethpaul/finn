@@ -60,9 +60,16 @@ Current baseline:
 - Restaurant image responses require an `image/` MIME type before declared
   length acceptance or body buffering.
 - Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
-  no larger than 1 MiB.
+  no larger than 1 MiB. The transport enforces the limit while bytes stream;
+  redirects and cumulative overflow fail before parsing.
 - The response-boundary predicate is shared by the app target and an executable
   standalone Swift behavioral harness.
+- Location fixes must be fresh, finite, in range, and reasonably accurate;
+  pending lookups are cancelled when the screen disappears and stale callbacks
+  cannot mutate the card stack.
+- Restaurant image targets reject local/private literal hosts, and raster
+  dimensions are inspected before UIKit decoding to reduce SSRF and pixel-bomb
+  risk.
 
 Next priorities:
 
@@ -80,6 +87,9 @@ Next priorities:
   loading
 - Keep the 5 MiB declared and cumulative image-response boundaries covered when
   changing image transport
+- Preserve the 1 MiB streaming API boundary and request-generation ownership.
+- Preserve the image-host and decoded-dimension policies when replacing the
+  legacy transport.
 - Keep hosted project validation aligned with `make check`.
 - Keep Xcode project file references portable across checkout locations.
 
