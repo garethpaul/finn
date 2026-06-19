@@ -7,7 +7,7 @@
 
 `garethpaul/finn` is an Apple platform application or Objective-C/Swift sample. App for finding Restaurants/Food etc
 
-This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: Swift (11), C/C++ headers (2).
+This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: Swift (13), C/C++ headers (2).
 
 ## Repository Contents
 
@@ -36,6 +36,9 @@ Additional scan context:
 ### Prerequisites
 
 - Git
+- GNU Make
+- A POSIX shell
+- Python 3
 - macOS with Xcode for building Apple platform projects
 - CocoaPods if dependencies need to be installed
 
@@ -59,17 +62,33 @@ The setup commands above are derived from repository files. Legacy mobile, Pytho
 
 ## Testing and Verification
 
-Run the static baseline:
+Run the maintained baseline:
 
 ```bash
 make check
 ```
 
+When `swiftc` is available, every Make gate first compiles and executes the
+production restaurant-response policy against the same 13 status, MIME, and
+size boundaries maintained by the independent Python oracle. The legacy XCTest
+target remains template-only and is not treated as behavioral evidence.
+
+The static gate requires GNU Make, a POSIX shell, and Python 3. It uses the
+`python3` command by default; set `PYTHON=/path/to/python3` on the Make command
+line when a compatible interpreter has a different name or location.
+
+Use the absolute Makefile path to run the same gate from another working
+directory. Verification resolves the checker relative to the loaded Makefile
+rather than the caller's directory.
+
 The baseline verifies CocoaPods lockfile expectations, workspace guidance,
 local API endpoint configuration, location data logging guardrails, and safe
-card queue handling. It also verifies that location updates stop after a usable
-callback location or failure and that location failures do not log raw error
-details. The API endpoint guard parses `FINN_API_BASE_URL` and rejects missing
+card queue handling. It also verifies that location updates start only after
+when-in-use or always authorization is granted, stop after a usable callback
+location or failure, reject stale or excessively inaccurate fixes, cancel
+pending work when the screen disappears, and do not log raw error details.
+Coordinates remain rounded to two decimals before transport. The API endpoint guard
+parses `FINN_API_BASE_URL` and rejects missing
 hosts, unresolved build-setting placeholders, userinfo, query strings, and
 fragments before sending coordinates. Coordinate parameters are trimmed,
 parsed completely, and checked against latitude/longitude ranges before
@@ -77,8 +96,24 @@ requests. API restaurant fields are trimmed,
 and blank restaurant names or image URLs are skipped before card creation.
 Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
-Restaurant image downloads inspect parsed URL parts, require HTTPS with a host,
-and reject embedded username/password before creating image requests.
+Restaurant image downloads inspect parsed URL parts, require HTTPS with a public
+host, and reject embedded username/password, localhost, private, link-local,
+multicast, and reserved IP targets before creating image requests.
+Image downloads use incremental `NSURLConnection` delegate callbacks, reject a
+declared or cumulative response over 5 MiB before UIKit decoding, and use a
+15-second request timeout. Picker cards retain the active loader, cancel it when
+released, and avoid a strong image-callback cycle.
+Missing or non-image response MIME types are cancelled before declared-length
+acceptance or body buffering.
+JPEG, PNG, and GIF dimensions are inspected before UIKit decoding; either
+dimension may be at most 4096 pixels and the total may be at most 16,777,216
+pixels. Restaurant API JSON parsing requires HTTP 200, `application/json`, and
+a body no larger than 1 MiB. Transport rejects redirects and enforces that limit
+while bytes arrive rather than after a complete Alamofire buffer. Parsing also
+caps accepted restaurants at 100, names at 200 characters, and image URLs at
+2048 characters.
+The pure status/MIME/size decision is shared with the standalone executable
+Swift harness instead of being reimplemented only in Python.
 The `make lint`, `make test`, and `make build` aliases run the same static
 baseline while this legacy sample has no narrower installed gates here. For
 functional testing, use Xcode's test action or `xcodebuild test` with the
@@ -110,12 +145,25 @@ When the required SDK or runtime is unavailable, use static checks and source re
   requests.
 - Restaurant image URLs should be loaded over HTTPS only.
 - Restaurant image URLs should include a host and no embedded username/password.
+- Restaurant image responses should enforce the 5 MiB limit while bytes arrive,
+  not only after a complete response has been buffered.
+- Restaurant image redirects are rejected before a redirected request can load.
+- Image hosts must not be localhost or literal private/link-local/reserved
+  addresses. DNS resolution is still a deployment trust boundary.
+- Image dimensions are bounded before UIKit decoding to reduce compressed
+  pixel-bomb memory risk.
+- Location fixes must be finite, in range, no more than 30 seconds old, and no
+  less accurate than 1500 meters; two-decimal coordinates are sent only while
+  the restaurant screen owns the lookup.
 - Blank restaurant names or image URLs from the API should be rejected before
   cards are created.
 - Picker views should not force-unwrap restaurant state when rendering names or
   images.
 - Keep location updates scoped to the active restaurant lookup and avoid raw
   Core Location error details in logs.
+- Start location updates only after Core Location reports an authorized state;
+  requesting when-in-use permission is asynchronous and must not trigger an
+  eager lookup.
 - Use the delegate-provided callback location for lookups instead of reading
   potentially stale manager state.
 
@@ -135,6 +183,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   lookup coordinate parameter coverage.
 - See `docs/plans/2026-06-09-image-url-parts-guard.md` for parsed restaurant
   image URL validation.
+- See `docs/plans/2026-06-13-streaming-image-response-limit.md` for the
+  transport-level image body boundary.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 

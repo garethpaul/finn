@@ -22,18 +22,20 @@
 - Lint/static checks: `make lint`
 - Tests: `make test`
 - Build: `make build`
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Override the
+  interpreter command with `make PYTHON=/path/to/python3 check` when needed.
 - Local Apple development: `open Finn.xcworkspace`
 - If a command above skips because a platform toolchain is missing, verify on a machine with that SDK before claiming platform behavior is tested.
 
 ## Coding conventions
 
-- Language mix noted in the README: Swift (11), C/C++ headers (2).
+- Language mix noted in the README: Swift (13), C/C++ headers (2).
 - Use the CocoaPods workspace when present; update `Podfile.lock` only with an intentional dependency change.
 - Preserve legacy Xcode project settings and signing assumptions unless the change is explicitly about modernization.
 
 ## Testing guidance
 
-- `FinnTests/FinnTests.swift` contains only template assertions; do not treat it as meaningful API, location, image-loading, or card-state coverage. The maintained regression gate is `make check`.
+- `FinnTests/FinnTests.swift` contains only template assertions; do not treat it as meaningful API, location, image-loading, or card-state coverage. `Tests/RestaurantAPIResponsePolicyTests/main.swift` is the standalone behavioral harness, and every Make gate compiles it with production policy when `swiftc` is available.
 - Start with the narrowest relevant test or Make target, then run `make check` before handing off if the change is not documentation-only.
 - Keep README verification notes in sync when commands, fixtures, or supported toolchains change.
 
@@ -49,10 +51,17 @@
 - `FINN_API_BASE_URL` is the local build setting used to configure the restaurant API endpoint.
 - Keep private endpoints, API credentials, signing files, and local `.xcconfig` files out of source control.
 - Avoid logging location data, restaurant preferences, or private API response payloads.
-- Use the delegate-provided callback location, stop updates after the first usable fix or failure, and keep failure logs free of raw Core Location details.
+- Start location updates only after an authorized Core Location state, use the delegate-provided callback location, stop updates after the first usable fix or failure, and keep failure logs free of raw Core Location details.
 - Coordinate parameters must be non-blank, parse completely as finite numbers, and remain within latitude and longitude ranges before restaurant API requests.
 - `FINN_API_BASE_URL` must resolve to HTTPS with a host and no userinfo, query, fragment, or unresolved build-setting placeholder.
 - Restaurant image URLs must use HTTPS with a host and no embedded userinfo before requests are created.
+- Restaurant image redirects are rejected before redirected requests start.
+- Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body no larger than 1 MiB.
+- Keep that response policy in the app target and execute the same production
+  source from the standalone Swift harness.
+- Restaurant image responses must enforce the 5 MiB limit against declared and
+  cumulative bytes before UIKit decoding, use a finite timeout, and clear
+  request state without logging transport details.
 - Trim and reject blank restaurant names or image URLs before cards are created, and keep picker rendering tolerant of missing restaurant state.
 - Hosted macOS CI proves the checked-in Xcode project parses and static contracts pass; it does not prove CocoaPods installation, signing, location authorization, live API behavior, or image rendering.
 

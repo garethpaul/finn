@@ -1,5 +1,52 @@
 # Changes
 
+## 2026-06-19
+
+- Replaced the fully buffered restaurant API callback with an owned streaming
+  connection that rejects redirects, invalid status/media type, declared bodies
+  over 1 MiB, and cumulative overflow before append.
+- Rejected stale, future, invalid, and excessively inaccurate location fixes;
+  stopped location and API work when the restaurant screen disappears; and
+  ignored stale completions through request generations.
+- Rejected localhost, private, link-local, multicast, and reserved IP image
+  targets, limited image media types, and inspected dimensions before UIKit
+  decoding to block compressed pixel bombs.
+- Bounded parsed restaurant count and field lengths, retained two-decimal
+  coordinate precision, and added native policy, fake-network, static, and
+  seven hostile mutation checks.
+
+## 2026-06-16
+
+- Extracted the restaurant response status/MIME/size predicate into app
+  production source and added a standalone Swift harness for all 13 boundaries.
+- Extended the maintained baseline to require API delegation, app-target
+  membership, harness wiring, and complete accepted/rejected case coverage.
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Added an
+  explicit interpreter override, actionable runtime diagnostics, and mandatory
+  plist parsing after the shared preflight.
+
+## 2026-06-14
+
+- Required HTTP 200, `application/json`, and at most 1 MiB before restaurant API JSON parsing.
+- Restaurant image redirects are rejected before redirected requests can bypass
+  the validated URL boundary.
+
+## 2026-06-13
+
+- Made static verification independent of the caller's working directory by
+  resolving the baseline checker from the loaded Makefile.
+- Gated restaurant location updates on an already granted or callback-delivered
+  Core Location authorization state.
+- Rejected missing and non-image restaurant response MIME types before declared
+  length acceptance or body buffering.
+- Replaced whole-response image buffering with incremental delegate delivery,
+  declared and cumulative 5 MiB limits, finite timeout, and terminal cleanup.
+- Retained and cancelled each picker card's active loader while avoiding a
+  strong image-callback cycle.
+- Rejected empty and over-5-MiB restaurant image data before UIKit decoding.
+- Added static ordering, limit, documentation, and completed-evidence contracts
+  for the initial decode boundary.
+
 ## 2026-06-12
 
 - Replaced the Finn target's machine-specific bridging-header paths with the

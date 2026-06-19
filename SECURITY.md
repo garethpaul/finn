@@ -40,18 +40,47 @@ Helpful reports include:
 If this project requests device permissions such as location, camera, microphone, contacts, Bluetooth, health data, or local storage access, reports should describe the permission involved and whether sensitive data can be accessed, persisted, or transmitted unexpectedly. Please avoid testing against real third-party user data or accounts you do not control.
 
 Finn's location flow should use a single foreground coordinate lookup for the
-restaurant request, stop updates after a usable fix or failure, and avoid raw
-location coordinates or Core Location error details in logs.
+restaurant request, start updates only after Core Location reports when-in-use
+or always authorization, stop updates after a usable fix or failure, and avoid
+raw location coordinates or Core Location error details in logs.
+Fixes should be finite, in range, no more than 30 seconds old, and no less
+accurate than 1500 meters. The screen must cancel location and restaurant API
+work when it disappears, and stale callbacks must not mutate card state.
 
 Restaurant image URLs should use HTTPS with a parsed host and no embedded
 username/password, and swipe preference events should not be written to
 application logs.
 
+Restaurant image responses over 5 MiB should be rejected while delegate chunks
+arrive and before UIKit decoding. Declared response lengths and cumulative
+bytes must both be checked because servers may omit or misstate content length.
+Missing or non-image MIME types should be rejected before declared-length
+acceptance or response buffering.
+Restaurant image redirects are rejected before a redirected request can bypass
+the validated URL boundary.
+Literal localhost, private, link-local, multicast, and reserved image targets
+must fail closed. JPEG, PNG, and GIF metadata must remain within 4096 pixels per
+axis and 16,777,216 total pixels before UIKit decoding. DNS rebinding remains a
+deployment trust boundary beyond these syntactic checks.
+The active picker should retain and cancel its finite-timeout loader without
+logging transport details or keeping a strong callback cycle.
+
 Restaurant API responses should not create cards with blank names or image URLs;
 trim and reject empty fields before rendering swipe cards.
+Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
+no larger than 1 MiB.
+The API client enforces the same boundary while delegate bytes arrive, rejects
+redirects, caps accepted restaurants and field lengths, and cancels stale work.
+The status/MIME/size predicate is compiled into the app target and executed by
+the standalone Swift harness, keeping the tested response decision tied to
+production source rather than a duplicated test implementation.
 
 Restaurant lookup coordinate parameters should be parsed completely and kept
 within latitude and longitude ranges before any API request is sent.
+
+The 2026-06-19 review did not use a live restaurant provider, Core Location
+session, CocoaPods build, simulator, or physical device. The archival dependency
+stack should not be treated as a supported production client.
 
 ## Dependency and Supply Chain Security
 

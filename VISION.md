@@ -25,6 +25,8 @@ Current baseline:
 
 - `scripts/check-baseline.sh` and `make check` verify the CocoaPods lockfile,
   workspace guidance, API configuration, and location guardrails.
+- The static gate requires GNU Make, a POSIX shell, and Python 3. Its
+  interpreter command is explicit and fails fast when missing or incompatible.
 - GitHub Actions runs that baseline on macOS and parses the checked-in Xcode
   project without requiring generated CocoaPods files, private API settings, or
   persisted checkout credentials.
@@ -36,6 +38,8 @@ Current baseline:
   placeholders, missing hosts, embedded userinfo, query strings, and fragments.
 - Restaurant lookup coordinate parameters are parsed completely and checked
   against valid latitude and longitude ranges before requests.
+- Location updates begin only after Core Location reports an authorized state;
+  the asynchronous when-in-use prompt never triggers an eager lookup.
 - Rounded location coordinates are not logged from the view controller.
 - Location updates stop after a usable foreground fix or failure, and failure
   logs avoid raw Core Location error details.
@@ -44,11 +48,28 @@ Current baseline:
 - Card queue setup guards against API responses with too few restaurants.
 - Restaurant names and image URLs from the API are trimmed and blank values are
   skipped before card creation.
+- Restaurant image redirects are rejected before any redirected request starts.
 - Picker views avoid force-unwrapping restaurant state while rendering card
   names and images.
 - Restaurant image downloads require HTTPS and swipe preferences are not logged.
 - Restaurant image downloads also require a parsed host and reject embedded
   username/password before requests.
+- Restaurant image loading rejects declared or cumulative payloads over 5 MiB
+  during delegate delivery, before UIKit processing, with a finite timeout and
+  explicit request-state cleanup.
+- Restaurant image responses require an `image/` MIME type before declared
+  length acceptance or body buffering.
+- Restaurant API JSON parsing requires HTTP 200, `application/json`, and a body
+  no larger than 1 MiB. The transport enforces the limit while bytes stream;
+  redirects and cumulative overflow fail before parsing.
+- The response-boundary predicate is shared by the app target and an executable
+  standalone Swift behavioral harness.
+- Location fixes must be fresh, finite, in range, and reasonably accurate;
+  pending lookups are cancelled when the screen disappears and stale callbacks
+  cannot mutate the card stack.
+- Restaurant image targets reject local/private literal hosts, and raster
+  dimensions are inspected before UIKit decoding to reduce SSRF and pixel-bomb
+  risk.
 
 Next priorities:
 
@@ -64,6 +85,11 @@ Next priorities:
   modernization
 - Keep parsed image URL validation covered when changing restaurant card image
   loading
+- Keep the 5 MiB declared and cumulative image-response boundaries covered when
+  changing image transport
+- Preserve the 1 MiB streaming API boundary and request-generation ownership.
+- Preserve the image-host and decoded-dimension policies when replacing the
+  legacy transport.
 - Keep hosted project validation aligned with `make check`.
 - Keep Xcode project file references portable across checkout locations.
 
