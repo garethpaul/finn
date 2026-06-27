@@ -28,6 +28,7 @@ expect(isAllowedRestaurantImageHost("10.1.2.3"), false, "IPv4 private")
 expect(isAllowedRestaurantImageHost("169.254.1.2"), false, "IPv4 link local")
 expect(isAllowedRestaurantImageHost("192.168.1.2"), false, "IPv4 private LAN")
 expect(isAllowedRestaurantImageHost("::1"), false, "IPv6 loopback")
+expect(isAllowedRestaurantImageHost("::ffff:127.0.0.1"), false, "IPv4-mapped IPv6 loopback")
 expect(isAllowedRestaurantImageHost("fd00::1"), false, "IPv6 unique local")
 expect(isAllowedRestaurantImageHost("fe80::1"), false, "IPv6 link local")
 

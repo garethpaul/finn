@@ -58,8 +58,8 @@ Missing or non-image MIME types should be rejected before declared-length
 acceptance or response buffering.
 Restaurant image redirects are rejected before a redirected request can bypass
 the validated URL boundary.
-Literal localhost, private, link-local, multicast, and reserved image targets
-must fail closed. JPEG, PNG, and GIF metadata must remain within 4096 pixels per
+Literal localhost, private, link-local, multicast, reserved, and IPv4-mapped
+IPv6 image targets must fail closed. JPEG, PNG, and GIF metadata must remain within 4096 pixels per
 axis and 16,777,216 total pixels before UIKit decoding. DNS rebinding remains a
 deployment trust boundary beyond these syntactic checks.
 The active picker should retain and cancel its finite-timeout loader without

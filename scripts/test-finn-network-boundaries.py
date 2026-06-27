@@ -3,16 +3,23 @@ from pathlib import Path
 import sys
 
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     raise SystemExit(
-        "usage: test-finn-network-boundaries.py API.swift Picture.swift "
+        "usage: test-finn-network-boundaries.py API.swift Picture.swift RemoteImagePolicy.swift "
         "FinnPickerView.swift ViewController.swift"
     )
 
 api = Path(sys.argv[1]).read_text(encoding="utf-8")
 picture = Path(sys.argv[2]).read_text(encoding="utf-8")
-picker = Path(sys.argv[3]).read_text(encoding="utf-8")
-view = Path(sys.argv[4]).read_text(encoding="utf-8")
+remote_image_policy = Path(sys.argv[3]).read_text(encoding="utf-8")
+picker = Path(sys.argv[4]).read_text(encoding="utf-8")
+view = Path(sys.argv[5]).read_text(encoding="utf-8")
+
+if 'normalizedHost.hasPrefix("::ffff:")' not in remote_image_policy:
+    raise SystemExit("IPv4-mapped IPv6 image hosts must be rejected.")
+boundary_harness = Path(sys.argv[3]).resolve().parents[1] / "Tests/FinnBoundaryPolicyTests/main.swift"
+if 'isAllowedRestaurantImageHost("::ffff:127.0.0.1")' not in boundary_harness.read_text(encoding="utf-8"):
+    raise SystemExit("Boundary harness must cover IPv4-mapped IPv6 loopback.")
 
 required_api = (
     "class APIClient: NSObject, NSURLConnectionDataDelegate",

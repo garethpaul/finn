@@ -98,7 +98,8 @@ Picker views avoid force-unwrapping restaurant state while rendering names and
 images.
 Restaurant image downloads inspect parsed URL parts, require HTTPS with a public
 host, and reject embedded username/password, localhost, private, link-local,
-multicast, and reserved IP targets before creating image requests.
+multicast, reserved, and IPv4-mapped IPv6 targets before creating image
+requests.
 Image downloads use incremental `NSURLConnection` delegate callbacks, reject a
 declared or cumulative response over 5 MiB before UIKit decoding, and use a
 15-second request timeout. Picker cards retain the active loader, cancel it when
