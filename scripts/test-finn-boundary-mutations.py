@@ -56,6 +56,7 @@ native_mutations = (
 static_mutations = (
     ("Finn/API.swift", "if !isActiveConnection(connection) {", "if false {"),
     ("Finn/Picture.swift", "acceptsRestaurantImageMetadata(responseMIMEType, data: receivedData)", "true"),
+    ("Finn/RemoteImagePolicy.swift", 'normalizedHost.hasPrefix("::ffff:")', "false"),
     ("Finn/ViewController.swift", "        api.cancel()", "        // api cancellation removed"),
 )
 
@@ -94,6 +95,7 @@ with tempfile.TemporaryDirectory(prefix="finn-boundary-mutations.") as temporary
                 "scripts/test-finn-network-boundaries.py",
                 "Finn/API.swift",
                 "Finn/Picture.swift",
+                "Finn/RemoteImagePolicy.swift",
                 "Finn/FinnPickerView.swift",
                 "Finn/ViewController.swift",
             ],
@@ -102,4 +104,4 @@ with tempfile.TemporaryDirectory(prefix="finn-boundary-mutations.") as temporary
         if result.returncode == 0:
             raise SystemExit(f"static mutation {index} survived")
 
-print("Finn boundary mutations rejected (7 cases)")
+print("Finn boundary mutations rejected (8 cases)")

@@ -1,5 +1,57 @@
 # Changes
 
+## 2026-06-27T00:34:00Z - P1 - Reject IPv4-mapped image hosts
+
+### Summary
+Closed an image-request SSRF bypass where an IPv4 loopback or private address
+encoded as an IPv4-mapped IPv6 literal avoided both existing host classifiers.
+
+### Work completed
+- Rejected `::ffff:` image hosts, including bracketed URL-host forms, before
+  any image request is created.
+- Added the mapped-loopback case to the production Swift policy harness and a
+  Linux-runnable source contract.
+- Added an eighth hostile mutation for removal of the mapped-address guard.
+- Made Swift-only mutation execution skip with the other native tests when
+  `swiftc` is unavailable instead of breaking the documented portable gate.
+
+### Threads
+- None; no open pull requests or issues existed, and stale branches were behind
+  the protected default branch.
+
+### Files changed
+- `Finn/RemoteImagePolicy.swift` — reject IPv4-mapped IPv6 literals.
+- `Tests/FinnBoundaryPolicyTests/main.swift` — add native mapped-loopback case.
+- `scripts/test-finn-network-boundaries.py` — enforce the source and harness
+  contract on non-Swift hosts.
+- `scripts/test-finn-boundary-mutations.py` — reject mapped-guard removal.
+- `Makefile` — run Swift mutations only when `swiftc` is available.
+- `README.md`, `SECURITY.md` — document the mapped-address boundary.
+- `docs/plans/2026-06-27-ipv4-mapped-image-hosts.md` — record design/evidence.
+
+### Validation
+- Native Swift harness — not run locally because `swiftc` is unavailable.
+- Linux-runnable contract before implementation — failed on the missing
+  mapped-address guard.
+- Linux-runnable contract after implementation — passed.
+- `make check` — passed fake-network, redirect, response, project, and baseline
+  gates with a truthful native Swift skip.
+- Python compilation, shell syntax, and `git diff --check` — passed.
+
+### Bugs / findings
+- `::ffff:127.0.0.1` contained colons but matched none of the loopback, ULA, or
+  link-local prefixes, so the policy incorrectly treated it as a public host.
+- The portable Make gate unconditionally invoked a Swift-only mutation runner
+  after correctly skipping the other native tests.
+
+### Blockers
+- Local Linux cannot compile the Swift policy; hosted macOS is authoritative for
+  the native harness and eight mutation cases.
+
+### Next action
+- Require the exact pull-request head to pass hosted Swift, Xcode project,
+  mutation, and CodeQL checks before merge.
+
 ## 2026-06-19
 
 - Replaced the fully buffered restaurant API callback with an owned streaming

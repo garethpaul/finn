@@ -43,8 +43,8 @@ these adjacent ownership boundaries.
   headers, and streamed append limits.
 - Fake-network tests cover valid chunked delivery, cumulative overflow, invalid
   status/media/length, redirect ownership, cancellation, and decode ordering.
-- Seven hostile mutations reject weakened age, host, dimension, append,
-  connection-identity, decode, and lifecycle controls.
+- Eight hostile mutations reject weakened age, host, mapped-address, dimension,
+  append, connection-identity, decode, and lifecycle controls.
 - `make check`, all Make aliases, external-directory execution, project parsing,
   shell/Python syntax checks, and hosted checks are required.
 

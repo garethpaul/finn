@@ -42,6 +42,10 @@ let isAllowedRestaurantImageHost: (String) -> Bool = { host in
         return false
     }
 
+    if normalizedHost.hasPrefix("::ffff:") || normalizedHost.hasPrefix("[::ffff:") {
+        return false
+    }
+
     if policyContainsColon(normalizedHost) {
         if normalizedHost == "::1" || normalizedHost.hasPrefix("fc") ||
             normalizedHost.hasPrefix("fd") || normalizedHost.hasPrefix("fe8") ||
