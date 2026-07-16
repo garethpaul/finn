@@ -1,5 +1,43 @@
 # Changes
 
+## 2026-07-16T00:00:00Z - P2 - Stop discarding executable policy suite failures
+
+### Summary
+The `check` recipe ran the two executable Swift policy suites and the hostile
+mutation suite as a `;`-separated list inside a single `if` block. Make runs each
+recipe line through one `sh -c` without `set -e`, so the list exited with the
+status of only its last command and both policy suites' failures were discarded.
+A failing suite reported success. Because CI runs on `macos-15`, where `swiftc`
+is present, this affected the live gate rather than a dormant path.
+
+### Work completed
+- `&&`-joined the executable policy suites so any one failing fails the gate,
+  matching the pattern already used by `foursquare-ar-camera-ios`.
+- Added a baseline assertion pinning the `&&`-join, so reverting to `;` is
+  caught rather than silently reintroducing the swallow.
+
+### Threads
+- None.
+
+### Files changed
+- `Makefile` — `&&`-join the executable policy suites.
+- `scripts/check-baseline.sh` — assert the policy suites stay `&&`-joined.
+
+### Validation
+- Native Swift suites — not run; `swiftc` is unavailable on Linux, so their
+  pass/fail behaviour on macOS is unverified here.
+- In-repo reproduction with `SWIFTC=/bin/true`, so both policy suites genuinely
+  fail (exit 127) — before: `make check` exited 0; after: exited 2.
+- Isolated replica of the recipe shape — `;` with a passing last command exited
+  0; `&&` exited 2.
+- Baseline assertion liveness — reverting the recipe to `;` while keeping the
+  assertion is caught with the intended message.
+- `make check`, `make lint`, `make test`, `make build` on a clean tree — passed.
+
+### Bugs / findings
+- Only `test-finn-boundary-mutations.py`, as the last command in the list, was
+  load-bearing; the two suites it complements were not.
+
 ## 2026-06-27T00:34:00Z - P1 - Reject IPv4-mapped image hosts
 
 ### Summary
