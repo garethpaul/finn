@@ -289,6 +289,16 @@ if ! grep -Fq 'PYTHON ?= python3' "$ROOT_DIR/Makefile" ||
   exit 1
 fi
 
+# Make runs each recipe line through a single `sh -c` without `set -e`, so a
+# `;`-separated command list exits with the status of only its last command and
+# every earlier failure is discarded. The executable policy suites must stay
+# `&&`-joined so that any one of them failing fails the gate.
+if ! grep -Fq 'SWIFTC="$(SWIFTC)" "$(ROOT)/scripts/run-api-response-policy-tests.sh" && \' "$ROOT_DIR/Makefile" ||
+  ! grep -Fq 'SWIFTC="$(SWIFTC)" "$(ROOT)/scripts/run-finn-boundary-policy-tests.sh" && \' "$ROOT_DIR/Makefile"; then
+  printf '%s\n' "Makefile must && -join the executable policy suites so their failures reach make." >&2
+  exit 1
+fi
+
 python_preflight=$(sed -n '/^PYTHON=${PYTHON:-python3}$/,/^require_file()/p' "$ROOT_DIR/scripts/check-baseline.sh")
 for python_preflight_contract in \
   'PYTHON=${PYTHON:-python3}' \
